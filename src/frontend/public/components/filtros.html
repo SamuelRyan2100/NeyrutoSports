@@ -1,0 +1,43 @@
+<div class="filtros-container py-4">
+  <div class="container text-center">
+    
+    <!-- Campo de busca centralizado -->
+    <div class="mb-3">
+      <input
+        type="text"
+        class="form-control w-50 mx-auto"
+        placeholder="🔍 Buscar atividades"
+      />
+    </div>
+
+    <!-- Filtros centralizados -->
+    <div class="d-flex justify-content-center gap-3 flex-wrap">
+      <!-- Modalidade -->
+      <select name="modalidade" class="form-select w-auto">
+        <option disabled selected value="">Modalidade</option>
+        <option value="futebol">Futebol</option>
+        <option value="volei">Vôlei</option>
+        <option value="handbol">Handbol</option>
+        <option value="zumba">Zumba</option>
+        <option value="futsal">Futsal</option>
+        <option value="basquete">Basquete</option>
+      </select>
+
+      <!-- Nível -->
+      <select name="nivel" class="form-select w-auto">
+        <option disabled selected value="">Nível</option>
+        <option value="iniciante">Iniciante</option>
+        <option value="intermediario">Intermediário</option>
+        <option value="avancado">Avançado</option>
+      </select>
+
+      <!-- Gratuito -->
+      <select name="gratuito" class="form-select w-auto">
+        <option disabled selected value="">Gratuito?</option>
+        <option value="true">Sim</option>
+        <option value="false">Não</option>
+      </select>
+    </div>
+
+  </div>
+</div>
