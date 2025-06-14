@@ -1,0 +1,57 @@
+/* Estilo para o contêiner principal do cabeçalho */
+.cabecalho-container {
+    background-color: #0d2d52; 
+    padding: 20px 40px;
+    color: white; 
+    font-family: Arial, sans-serif;
+}
+
+
+/* Estilo para a div que agrupa a imagem da logo e o nome do site */
+.logo {
+    display: flex; 
+    align-items: center; 
+    gap: 5px; 
+
+    transform: translateY(-5px);
+}
+
+/* Estilo para a imagem dentro da div.logo */
+.logo img {
+    max-width: 60px; 
+    height: auto;
+    display: block;
+}
+
+/* Estilo para o nome do site */
+.nomeDoSite {
+    font-size: 0.9em;
+    font-weight: bold;
+    white-space: nowrap;
+    color: white; 
+}
+
+
+/* Estilo para todos os links de navegação do Bootstrap */
+.nav-item .nav-link {
+    color: white; 
+    text-decoration: none;
+    font-size: 1.1em;
+    padding: 0.5rem 1rem;
+}
+
+/* Estilo para o link ativo */
+.nav-item .nav-link.active {
+    color: white;
+    font-weight: bold;
+}
+
+/* Efeito visual ao passar o mouse sobre o link */
+.nav-item .nav-link:hover {
+    text-decoration: underline;
+}
+
+/* Adicione estilos para o filtros-container se ele aparecer abaixo da navbar e precisar de espaçamento */
+.filtros-container {
+    padding: 20px 40px; 
+}
