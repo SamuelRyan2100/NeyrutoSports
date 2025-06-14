@@ -1,7 +1,7 @@
 /* Estilo para o contêiner principal do cabeçalho */
 .cabecalho-container {
     background-color: #0d2d52; 
-    padding: 20px 40px;
+    padding: 10px 40px;
     color: white; 
     font-family: Arial, sans-serif;
 }
