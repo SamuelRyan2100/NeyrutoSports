@@ -23,19 +23,16 @@
 
 <body>
 
-    <!-- Parte superior -->
     <div class="container-fluid">
         <div class="row mt-2 mb-3">
             <div class="col text-white" id="linhaSuperior">
                 <div class="position-relative h-100">
 
-                    <!-- Logo -->
                     <div class="position-absolute top-0 start-0 p-3 d-flex align-items-center">
                         <i class="fa-regular fa-futbol fa-2x me-2"></i>
                         <h3 class="m-0">SportsMark</h3>
                     </div>
 
-                    <!-- Campo de busca -->
                     <div class="position-absolute top-50 start-50 translate-middle" style="width: 300px;">
                         <div class="input-group">
                             <span class="input-group-text bg-white border-end-0">
@@ -46,14 +43,12 @@
                         </div>
                     </div>
 
-                    <!-- Botões desktop (visíveis em md+) -->
                     <div class="position-absolute top-0 end-0 p-3 d-none d-md-flex gap-2">
                         <button class="btn btn-outline-light">Cadastrar Horário</button>
                         <button class="btn btn-outline-light">Reservas</button>
-                        <a href="pages/login/login.html" class="btn btn-outline-light">Login</a>
+                        <a href="pages/login/login.html" class="btn btn-outline-light" id="loginBtnDesktop">Login</a>
                     </div>
 
-                    <!-- Botão menu mobile (visível só em telas pequenas) -->
                     <nav class="navbar navbar-dark position-absolute top-0 end-0 p-3 d-block d-md-none"
                         style="z-index: 1050;">
                         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -64,7 +59,6 @@
                     </nav>
 
 
-                    <!-- Menu colapsado (mobile) -->
                     <div class="collapse position-absolute top-100 end-0 bg-dark p-3 rounded shadow mt-2 d-md-none"
                         id="menuSuperior" style="z-index: 999;">
                         <ul class="navbar-nav">
@@ -74,7 +68,7 @@
                             <li class="nav-item mb-2">
                                 <button class="btn btn-outline-light w-100">Reservas</button>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item" id="loginItemMobile">
                                 <a href="pages/login/login.html" class="btn btn-outline-light w-100">Login</a>
                             </li>
                         </ul>
@@ -86,10 +80,94 @@
     </div>
 
 
-    <!-- Bootstrap JS (obrigatório para funcionar o menu responsivo) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
 
+    <script>
+        const logado = localStorage.getItem("logado");
+
+        // Função para deslogar
+        function logout() {
+            localStorage.removeItem("logado"); // Remove o item do localStorage
+            window.location.reload(); // Recarrega a página para atualizar o estado
+        }
+
+        if (logado === "true") {
+            // Esconde botão "Login" no desktop
+            const loginBtnDesktop = document.getElementById('loginBtnDesktop');
+            if (loginBtnDesktop) {
+                loginBtnDesktop.style.display = "none";
+            }
+
+            // Esconde botão "Login" no mobile
+            const loginItemMobile = document.getElementById('loginItemMobile');
+            if (loginItemMobile) {
+                loginItemMobile.style.display = "none";
+            }
+
+            // --- Para Desktop ---
+            const botoesDesktop = document.querySelector(".d-md-flex.gap-2");
+            if (botoesDesktop) {
+                // Cria um grupo de dropdown para o botão Perfil
+                const dropdownDivDesktop = document.createElement("div");
+                dropdownDivDesktop.className = "dropdown";
+
+                const btnPerfilDesktop = document.createElement("button");
+                btnPerfilDesktop.className = "btn btn-outline-light dropdown-toggle";
+                btnPerfilDesktop.setAttribute("type", "button");
+                btnPerfilDesktop.setAttribute("data-bs-toggle", "dropdown");
+                btnPerfilDesktop.setAttribute("aria-expanded", "false");
+                btnPerfilDesktop.textContent = "Perfil";
+
+                const dropdownMenuDesktop = document.createElement("ul");
+                dropdownMenuDesktop.className = "dropdown-menu dropdown-menu-dark"; // Adiciona dropdown-menu-dark para tema escuro
+
+                const logoutLiDesktop = document.createElement("li");
+                const logoutLinkDesktop = document.createElement("a");
+                logoutLinkDesktop.className = "dropdown-item";
+                logoutLinkDesktop.href = "#"; // Evita navegação
+                logoutLinkDesktop.textContent = "Sair";
+                logoutLinkDesktop.onclick = logout; // Chama a função logout
+                logoutLiDesktop.appendChild(logoutLinkDesktop);
+                dropdownMenuDesktop.appendChild(logoutLiDesktop);
+
+                dropdownDivDesktop.appendChild(btnPerfilDesktop);
+                dropdownDivDesktop.appendChild(dropdownMenuDesktop);
+
+                botoesDesktop.appendChild(dropdownDivDesktop);
+            }
+
+            // --- Para Mobile ---
+            const menuMobile = document.querySelector("#menuSuperior ul.navbar-nav");
+            if (menuMobile) {
+                const liPerfilMobile = document.createElement("li");
+                liPerfilMobile.className = "nav-item mt-2 dropdown"; // Adiciona a classe dropdown
+
+                const btnPerfilMobile = document.createElement("button");
+                btnPerfilMobile.className = "btn btn-outline-light dropdown-toggle w-100";
+                btnPerfilMobile.setAttribute("type", "button");
+                btnPerfilMobile.setAttribute("data-bs-toggle", "dropdown");
+                btnPerfilMobile.setAttribute("aria-expanded", "false");
+                btnPerfilMobile.textContent = "Perfil";
+
+                const dropdownMenuMobile = document.createElement("ul");
+                dropdownMenuMobile.className = "dropdown-menu dropdown-menu-dark"; // Adiciona dropdown-menu-dark para tema escuro
+
+                const logoutLiMobile = document.createElement("li");
+                const logoutLinkMobile = document.createElement("a");
+                logoutLinkMobile.className = "dropdown-item";
+                logoutLinkMobile.href = "#"; // Evita navegação
+                logoutLinkMobile.textContent = "Sair";
+                logoutLinkMobile.onclick = logout; // Chama a função logout
+                logoutLiMobile.appendChild(logoutLinkMobile);
+                dropdownMenuMobile.appendChild(logoutLiMobile);
+
+                liPerfilMobile.appendChild(btnPerfilMobile);
+                liPerfilMobile.appendChild(dropdownMenuMobile);
+                menuMobile.appendChild(liPerfilMobile);
+            }
+        }
+    </script>
 </body>
 
 </html>
