@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,9 +15,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
-
 <body>
-
     <header class="barraSuperior">
         <div class="conteudoBarraSuperior">
             <h1 class="tituloSite">SportsMarc</h1>
@@ -37,31 +34,58 @@
         <div class="listaReservas">
             <div class="itemReserva">
                 <div class="detalhesItem">
-                    <span class="nomeItem">🏀 Quadra de Basquete</span>
-                    <span class="localItem">Local: Centro Esportivo</span>
+                    🏀 Quadra de Basquete<br>
+                    Local: Centro Esportivo
                 </div>
-                <span class="horarioItem">15:00 - 16:00</span>
+                15:00 - 16:00
             </div>
 
             <div class="itemReserva">
                 <div class="detalhesItem">
-                    <span class="nomeItem">⚽ Campo de Futebol</span>
-                    <span class="localItem">Local: Parque Municipal</span>
+                    ⚽ Campo de Futebol<br>
+                    Local: Parque Municipal
                 </div>
-                <span class="dataItem">12/12/2025</span>
+                12/12/2025
             </div>
 
             <div class="itemReserva">
                 <div class="detalhesItem">
-                    <span class="nomeItem">🎾 Quadra de Tênis</span>
-                    <span class="localItem">Local: Clube de Tênis</span>
+                    🎾 Quadra de Tênis<br>
+                    Local: Clube de Tênis
                 </div>
-                <span class="dataItem">12/12/2025</span>
+                12/12/2025
+            </div>
+            <div class="itemReserva">
+                <div class="detalhesItem">
+                    🏐 Quadra de Vôlei<br>
+                    Local: Clube de Vôlei
+                </div>
+                12/12/2025
             </div>
         </div>
+    </main>
 
-        </main>
-
-    </body>
-
+    <div id="modalReserva" class="modalReserva">
+        <div class="conteudoModal">
+            <span class="botaoFechar">&times;</span>
+            <div class="cabecalhoModal">
+                <div class="detalhesItem">
+                    🏀 Quadra de Basquete<br>
+                    Local: Centro Esportivo
+                </div>
+                15:00 - 16:00
+            </div>
+            <div class="corpoModal">
+                <p>Participantes:</p>
+                <ul class="listaParticipantes">
+                <li>Ycaro</li>
+                <li>Juan</li>
+                <li>Samuel</li>
+                <li>Guilherme</li>
+                <li>Isaac</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
 </html>
