@@ -88,6 +88,7 @@ body {
   border-radius: 15px;
   font-size: 18px;
   transition: background 0.3s;
+  background: linear-gradient(135deg, #1abc9c, #16a085); 
 }
 
 .login:hover {
