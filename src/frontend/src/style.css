@@ -34,3 +34,79 @@ body {
 #superiorDireito{
     background-color: transparent;
 }
+
+/*Agora o css do container de baixo*/
+.card-evento {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 24px;
+    transition: all 0.3s ease;
+    height: 100%; /* Garante que todos os cards na mesma linha tenham a mesma altura */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Empurra o rodapé para o fundo */
+}
+
+.card-evento:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.card-header-evento {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.card-header-evento h4 {
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: #333;
+    margin: 0;
+}
+
+.card-header-evento span {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 500;
+    flex-shrink: 0; /* Impede que o texto "Intermediário" quebre */
+    margin-left: 10px;
+}
+
+.card-body-evento p {
+    margin: 0;
+    color: #555;
+    font-size: 1.1rem;
+}
+
+.card-footer-evento {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.card-footer-evento .horario {
+    margin: 0;
+    font-weight: 500;
+    color: #343a40;
+    font-size: 1rem;
+}
+
+.btn-participar {
+    background: linear-gradient(135deg, #1abc9c, #16a085); 
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.btn-participar:hover {
+    background-color: #325fA8;
+    color: white;
+}
