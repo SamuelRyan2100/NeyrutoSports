@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Horário</title>
+    <link rel="stylesheet" href="styleCadastro.css">
+    </head>
+<body>
+    <div class="form-container">
+        <div class="back-container">
+            <button class="back-button" onclick="window.location.href='../../index.html'">
+                ← Voltar
+            </button>
+        </div>
+
+        <h2>Cadastrar Horário</h2>
+        <form id="cadastroForm"> <div class="form-group">
+                <label for="data">Data</label>
+                <input type="date" id="data" name="data" required>
+            </div>
+
+            <div class="form-group">
+                <label for="inicio">Horário de Início</label>
+                <input type="time" id="inicio" name="horarioInicio" required> </div>
+
+            <div class="form-group">
+                <label for="fim">Horário de Fim</label>
+                <input type="time" id="fim" name="horarioFim" required> </div>
+
+            <div class="form-group">
+                <label for="tipo">Tipo de Quadra</label> <input type="text" id="tipo" name="tipo" placeholder="Ex: Futebol, Basquete" required>
+            </div>
+
+            <div class="form-group">
+                <label for="nome">Nome da Quadra</label> <input type="text" id="nome" name="nome" placeholder="Ex: Quadra A, Ginásio Principal" required>
+            </div>
+
+            <div class="form-group">
+                <label for="endereco">Endereço</label> <input type="text" id="endereco" name="endereco" placeholder="Ex: Rua Principal, 123" required>
+            </div>
+
+            <div class="form-group">
+                <label for="descricao">Descrição</label>
+                <textarea id="descricao" name="descricao" rows="5" placeholder="Ex: Preciso de mais 4 pessoas para completar o time..." required></textarea>
+            </div>
+
+            <button type="submit">Cadastrar</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('cadastroForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+
+            // Coletar os dados do formulário
+            const data = document.getElementById('data').value;
+            const horarioInicio = document.getElementById('inicio').value + ':00'; // Adiciona ":00" para segundos, se necessário
+            const horarioFim = document.getElementById('fim').value + ':00'; // Adiciona ":00" para segundos, se necessário
+            const tipo = document.getElementById('tipo').value; // Novo campo
+            const nome = document.getElementById('nome').value; // Novo campo
+            const endereco = document.getElementById('endereco').value; // Mudei de 'local' para 'endereco'
+
+            // Validação simples (você pode adicionar mais validações)
+            if (!data || !horarioInicio || !horarioFim || !tipo || !nome || !endereco) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
+
+            // Criar o objeto com os dados para enviar como JSON
+            const quadraData = {
+                data: data,
+                horarioInicio: horarioInicio,
+                horarioFim: horarioFim,
+                tipo: tipo, // Inclui o tipo
+                nome: nome,   // Inclui o nome
+                endereco: endereco // Usando 'endereco'
+                // A descrição não está no seu modelo Quadras.java,
+                // então não deve ser enviada se não tiver um campo correspondente.
+                // Se você adicionar 'private String descricao;' em Quadras.java,
+                // pode incluir: descricao: document.getElementById('descricao').value
+            };
+
+            try {
+                const response = await fetch('http://localhost:8080/api/quadras/cadastrar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(quadraData) // Converte o objeto JavaScript para uma string JSON
+                });
+
+                if (response.ok) {
+                    alert('Horário cadastrado com sucesso!');
+                    window.location.href = '../../index.html'; // Redireciona para a home
+                } else {
+                    const errorBody = await response.text(); // Pega o corpo da resposta de erro
+                    alert('Erro ao cadastrar horário: ' + errorBody);
+                    console.error('Detalhes do erro:', errorBody);
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+                alert('Não foi possível conectar ao servidor. Verifique se o backend está rodando.');
+            }
+        });
+    </script>
+</body>
+</html>

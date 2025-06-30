@@ -15,14 +15,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,100;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
     <title>Site Esportes</title>
 
 </head>
 
 <body>
-    <!--Container de cima-->
     <div class="container-fluid">
         <div class="row mt-2 mb-3">
             <div class="col text-white" id="linhaSuperior">
@@ -44,7 +43,7 @@
                     </div>
 
                     <div class="position-absolute top-0 end-0 p-3 d-none d-md-flex gap-2">
-                        <button class="btn btn-outline-light">Cadastrar Horário</button>
+                        <a href="pages/cadastrarHorario/cadastro.html" class="btn btn-outline-light">Cadastrar Horário</a>
                         <button class="btn btn-outline-light">Reservas</button>
                         <a href="pages/login/login.html" class="btn btn-outline-light" id="loginBtnDesktop">Login</a>
                     </div>
@@ -63,7 +62,7 @@
                         id="menuSuperior" style="z-index: 999;">
                         <ul class="navbar-nav">
                             <li class="nav-item mb-2">
-                                <button class="btn btn-outline-light w-100">Cadastrar Horário</button>
+                                <a href="pages/cadastrarHorario/cadastro.html" class="btn btn-outline-light w-100">Cadastrar Horário</a>
                             </li>
                             <li class="nav-item mb-2">
                                 <button class="btn btn-outline-light w-100">Reservas</button>
@@ -80,123 +79,9 @@
     </div>
 
 
-    <!--Container de Baixo-->
     <div class="container my-5">
-        <div class="row g-4">
-            <!-- Card 1: Futebol -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card-evento">
-                    <div>
-                        <div class="card-header-evento">
-                            <h4>Futebol</h4>
-
-                        </div>
-                        <div class="card-body-evento">
-                            <p>Ifma Caxias</p>
-                        </div>
-                    </div>
-                    <div class="card-footer-evento">
-                        <p class="horario">Hoje 18:00</p>
-                        <a href="#" class="btn btn-participar">Participar</a>
-                    </div>
-                </div>
+        <div class="row g-4" id="quadrasContainer">
             </div>
-
-            <!-- Card 2: Handbol -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card-evento">
-                    <div>
-                        <div class="card-header-evento">
-                            <h4>Handbol</h4>
-
-                        </div>
-                        <div class="card-body-evento">
-                            <p>João Castelo</p>
-                        </div>
-                    </div>
-                    <div class="card-footer-evento">
-                        <p class="horario">Amanhã 17:00</p>
-                        <a href="#" class="btn btn-participar">Participar</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 3: Vôlei -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card-evento">
-                    <div>
-                        <div class="card-header-evento">
-                            <h4>Vôlei</h4>
-
-                        </div>
-                        <div class="card-body-evento">
-                            <p>Ifma Caxias</p>
-                        </div>
-                    </div>
-                    <div class="card-footer-evento">
-                        <p class="horario">Amanhã 13:00</p>
-                        <a href="#" class="btn btn-participar">Participar</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 4: Zumba -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card-evento">
-                    <div>
-                        <div class="card-header-evento">
-                            <h4>Zumba</h4>
-
-                        </div>
-                        <div class="card-body-evento">
-                            <p>Ifma Caxias</p>
-                        </div>
-                    </div>
-                    <div class="card-footer-evento">
-                        <p class="horario">Hoje 09:00</p>
-                        <a href="#" class="btn btn-participar">Participar</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 5: Futsal -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card-evento">
-                    <div>
-                        <div class="card-header-evento">
-                            <h4>Futsal</h4>
-
-                        </div>
-                        <div class="card-body-evento">
-                            <p>Chapada</p>
-                        </div>
-                    </div>
-                    <div class="card-footer-evento">
-                        <p class="horario">25/05 18:00</p>
-                        <a href="#" class="btn btn-participar">Participar</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 6: Basquete -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card-evento">
-                    <div>
-                        <div class="card-header-evento">
-                            <h4>Basquete</h4>
-
-                        </div>
-                        <div class="card-body-evento">
-                            <p>Thalles</p>
-                        </div>
-                    </div>
-                    <div class="card-footer-evento">
-                        <p class="horario">Hoje 18:00</p>
-                        <a href="#" class="btn btn-participar">Participar</a>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
 
@@ -254,6 +139,9 @@
                 dropdownDivDesktop.appendChild(btnPerfilDesktop);
                 dropdownDivDesktop.appendChild(dropdownMenuDesktop);
 
+                // Adiciona o dropdown do perfil, se não quiser que ele substitua o botão de Cadastrar Horário
+                // Se o botão de cadastrar horário já for um link, ele será mantido
+                // Certifique-se de que a ordem dos elementos esteja correta no seu CSS/layout
                 botoesDesktop.appendChild(dropdownDivDesktop);
             }
 
@@ -287,6 +175,124 @@
                 menuMobile.appendChild(liPerfilMobile);
             }
         }
+
+        // --- Novo script para buscar e exibir as quadras ---
+        document.addEventListener("DOMContentLoaded", () => {
+            const quadrasContainer = document.getElementById("quadrasContainer");
+
+            // Função para formatar a data e hora, agora usando APENAS horarioInicio
+            function formatarDataEHorario(data, horarioInicio) { // Removido horarioFim
+                if (!data || !horarioInicio) {
+                    return "Horário Não Informado";
+                }
+
+                // Parse da data (formatoYYYY-MM-DD do LocalDate)
+                const [ano, mes, dia] = data.split('-').map(Number);
+                const dataEvento = new Date(ano, mes - 1, dia); // Mês é 0-indexed no JS Date
+
+                const hoje = new Date();
+                const amanha = new Date();
+                amanha.setDate(hoje.getDate() + 1);
+
+                const diaEvento = dataEvento.getDate();
+                const mesEvento = dataEvento.getMonth();
+                const anoEvento = dataEvento.getFullYear();
+
+                const diaHoje = hoje.getDate();
+                const mesHoje = hoje.getMonth();
+                const anoHoje = hoje.getFullYear();
+
+                const diaAmanha = amanha.getDate();
+                const mesAmanha = amanha.getMonth();
+                const anoAmanha = amanha.getFullYear();
+
+                let prefixoData = "";
+                if (diaEvento === diaHoje && mesEvento === mesHoje && anoEvento === anoHoje) {
+                    prefixoData = "Hoje";
+                } else if (diaEvento === diaAmanha && mesEvento === mesAmanha && anoEvento === anoAmanha) {
+                    prefixoData = "Amanhã";
+                } else {
+                    prefixoData = `${String(diaEvento).padStart(2, '0')}/${String(mesEvento + 1).padStart(2, '0')}`;
+                }
+
+                // Formatar horarioInicio (ele já vem como string "HH:MM:SS" ou "HH:MM" do LocalTime)
+                const [hi_h, hi_m] = horarioInicio.split(':');
+
+                // Retorna no formato "Hoje 18:00" ou "DD/MM 18:00"
+                return `${prefixoData} ${hi_h}:${hi_m}`;
+            }
+
+
+            // Função para buscar as quadras da API
+            async function fetchQuadras() {
+                try {
+                    const response = await fetch("http://localhost:8080/api/quadras/todasQuadras");
+                    if (!response.ok) {
+                        throw new Error(`Erro HTTP! status: ${response.status}`);
+                    }
+                    const quadras = await response.json();
+                    displayQuadras(quadras);
+                } catch (error) {
+                    console.error("Erro ao buscar as quadras:", error);
+                    quadrasContainer.innerHTML = "<p>Não foi possível carregar as quadras. Tente novamente mais tarde.</p>";
+                }
+            }
+
+            // Função para exibir as quadras no HTML
+            function displayQuadras(quadras) {
+                quadrasContainer.innerHTML = ""; // Limpa os cards existentes (os estáticos que você tinha)
+                if (quadras.length === 0) {
+                    quadrasContainer.innerHTML = "<p>Nenhuma quadra disponível no momento.</p>";
+                    return;
+                }
+
+                quadras.forEach(quadra => {
+                    const colDiv = document.createElement("div");
+                    colDiv.className = "col-lg-4 col-md-6";
+
+                    const cardEventoDiv = document.createElement("div");
+                    cardEventoDiv.className = "card-evento";
+
+                    const cardContentDiv = document.createElement("div"); // Agrupa header e body
+
+                    const cardHeaderEventoDiv = document.createElement("div");
+                    cardHeaderEventoDiv.className = "card-header-evento";
+                    const h4Titulo = document.createElement("h4");
+                    h4Titulo.textContent = quadra.tipo || "Tipo de Quadra";
+                    cardHeaderEventoDiv.appendChild(h4Titulo);
+
+                    const cardBodyEventoDiv = document.createElement("div");
+                    cardBodyEventoDiv.className = "card-body-evento";
+                    const pLocal = document.createElement("p");
+                    pLocal.textContent = quadra.endereco || "Endereço Não Informado";
+                    cardBodyEventoDiv.appendChild(pLocal);
+
+                    cardContentDiv.appendChild(cardHeaderEventoDiv);
+                    cardContentDiv.appendChild(cardBodyEventoDiv);
+
+                    const cardFooterEventoDiv = document.createElement("div");
+                    cardFooterEventoDiv.className = "card-footer-evento";
+                    const pHorario = document.createElement("p");
+                    pHorario.className = "horario";
+                    pHorario.textContent = formatarDataEHorario(quadra.data, quadra.horarioInicio);
+                    cardFooterEventoDiv.appendChild(pHorario);
+
+                    const aParticipar = document.createElement("a");
+                    aParticipar.href = "#";
+                    aParticipar.className = "btn btn-participar";
+                    aParticipar.textContent = "Participar";
+                    cardFooterEventoDiv.appendChild(aParticipar);
+
+                    cardEventoDiv.appendChild(cardContentDiv);
+                    cardEventoDiv.appendChild(cardFooterEventoDiv);
+                    colDiv.appendChild(cardEventoDiv);
+                    quadrasContainer.appendChild(colDiv);
+                });
+            }
+
+            // Chama a função para buscar as quadras quando a página carregar
+            fetchQuadras();
+        });
     </script>
 </body>
 
