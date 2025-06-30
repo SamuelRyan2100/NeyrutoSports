@@ -18,10 +18,10 @@ public class Quadras {
     @Column(name="id", nullable=false)
     private int id;
 
-    @Column(name="nome", nullable=false, length=100) // <--- CONFIRMAR SE VOCÊ TEM ESTE CAMPO
+    @Column(name="nome", nullable=false, length=100)
     private String nome;
 
-    @Column(name="tipo", nullable=false, length=100) // Ex: "Futsal", "Basquete"
+    @Column(name="tipo", nullable=false, length=100)
     private String tipo;
 
     @Column(name="endereco", nullable=false, length=255)
@@ -39,16 +39,39 @@ public class Quadras {
     @Column(name="limite_pessoas", nullable=false)
     private int limitePessoas;
 
+    // NOVO CAMPO: Para contar as pessoas que já reservaram
+    @Column(name="pessoas_atuais", nullable=false) // Deve ser NOT NULL no BD
+    private int pessoasAtuais = 0; // Valor inicial para novas quadras
+
+    // Você não incluiu 'descricao' na sua entidade, mas está no HTML.
+    // Se quiser salvar a descrição, adicione:
+    // @Column(name="descricao", length=255)
+    // private String descricao;
+
+
     // Construtor padrão
     public Quadras() {
     }
 
-    // Getters e Setters para todos os campos, incluindo 'nome' e 'limitePessoas'
+    // Adicione um construtor que inclui 'pessoasAtuais' se você for criar Quadras programaticamente
+    public Quadras(String nome, String tipo, String endereco, LocalDate data, LocalTime horarioInicio, LocalTime horarioFim, int limitePessoas, int pessoasAtuais) {
+        this.nome = nome;
+        this.tipo = tipo;
+        this.endereco = endereco;
+        this.data = data;
+        this.horarioInicio = horarioInicio;
+        this.horarioFim = horarioFim;
+        this.limitePessoas = limitePessoas;
+        this.pessoasAtuais = pessoasAtuais;
+    }
+
+
+    // Getters e Setters para todos os campos, incluindo 'pessoasAtuais'
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
-    public String getNome() { return nome; } // <--- GETTER PARA 'NOME'
-    public void setNome(String nome) { this.nome = nome; } // <--- SETTER PARA 'NOME'
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
 
     public String getTipo() { return tipo; }
     public void setTipo(String tipo) { this.tipo = tipo; }
@@ -68,17 +91,23 @@ public class Quadras {
     public int getLimitePessoas() { return limitePessoas; }
     public void setLimitePessoas(int limitePessoas) { this.limitePessoas = limitePessoas; }
 
+    // NOVO: Getters e Setters para pessoasAtuais
+    public int getPessoasAtuais() { return pessoasAtuais; }
+    public void setPessoasAtuais(int pessoasAtuais) { this.pessoasAtuais = pessoasAtuais; }
+
+
     @Override
     public String toString() {
         return "Quadras{" +
                 "id=" + id +
-                ", nome='" + nome + '\'' + // Incluir no toString
+                ", nome='" + nome + '\'' +
                 ", tipo='" + tipo + '\'' +
                 ", endereco='" + endereco + '\'' +
                 ", data=" + data +
                 ", horarioInicio=" + horarioInicio +
                 ", horarioFim=" + horarioFim +
                 ", limitePessoas=" + limitePessoas +
+                ", pessoasAtuais=" + pessoasAtuais + // Incluir no toString
                 '}';
     }
 }

@@ -1,100 +1,62 @@
-/* styleCadastro.css */
+/* --- Estilos para a tela de Acesso Negado --- */
 
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    min-height: 100vh;
-    margin: 0;
-    padding: 20px; 
-    box-sizing: border-box; 
-}
-
-.form-container {
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 500px;
-    box-sizing: border-box; 
-    margin-top: 50px; 
-    margin-bottom: 50px;
-    position: relative;
-}
-
-.back-container {
-    /* Ajuste para o botão voltar */
-    position: absolute; 
-    top: 10px; 
-    left: 10px; 
-}
-
-.back-button {
-     background: linear-gradient(135deg, #1abc9c, #16a085); 
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.back-button:hover {
-    background-color: #5a6268;
-}
-
-h2 {
+.acesso-negado {
     text-align: center;
-    color: #333;
-    margin-top: 20px; /* Adiciona margem superior para não ficar colado no botão voltar */
-    margin-bottom: 25px;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    max-width: 500px;
+    margin: 20px auto; 
 }
 
-.form-group {
+.acesso-negado .fa-exclamation-triangle {
+    color: #f0ad4e; /* Laranja de aviso */
+    margin-bottom: 20px;
+}
+
+.acesso-negado h2 {
+    color: #333;
     margin-bottom: 15px;
 }
 
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
+.acesso-negado p {
+    font-size: 1.1em;
     color: #555;
-    font-weight: bold;
+    margin-bottom: 30px;
 }
 
-.form-group input[type="date"],
-.form-group input[type="time"],
-.form-group input[type="text"],
-.form-group input[type="number"], /* Adicionado para o input de número */
-.form-group textarea {
-    width: calc(100% - 20px); /* Ajusta largura para considerar padding */
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box; /* Essencial para que o padding não aumente a largura total */
-}
-
-button[type="submit"] {
-    width: 100%;
-    padding: 12px;
-    background-color: #28a745; /* Verde */
+.acesso-negado .btn-login {
+    background: linear-gradient(135deg, #1abc9c, #16a085); 
     color: white;
+    padding: 12px 25px;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background-color 0.3s ease;
+}
+
+.acesso-negado .btn-login:hover {
+    background-color: #0056b3;
+}
+        
+.acesso-negado .link-voltar {
+    display: block;
     margin-top: 20px;
+    color: #6c757d;
+    text-decoration: none;
+    font-size: 0.9em;
 }
 
-button[type="submit"]:hover {
-    background-color: #218838;
+.acesso-negado .link-voltar:hover {
+    text-decoration: underline;
 }
 
-/* Adicione regras de mídia para responsividade, se necessário */
-@media (max-width: 600px) {
-    .form-container {
-        padding: 20px;
-    }
+/* Ajuste no botão de voltar original para usar ícone */
+.back-button i {
+    margin-right: 8px;
 }

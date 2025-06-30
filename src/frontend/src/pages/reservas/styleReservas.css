@@ -1,175 +1,111 @@
+/* Estilos Gerais */
 body {
-    margin: 0;
-    font-family: 'Roboto', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    background-color: #f4f7f6; /* Um cinza bem claro para o fundo */
+    font-family: 'Poppins', sans-serif; /* Usando uma fonte mais moderna, se disponível */
+    color: #333;
 }
 
-.barraSuperior {
-    background-color: #18AE90;
-    width: 100%;
-    padding: 15px 0;
-    color: #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    flex-shrink: 0;
-}
-
-.conteudoBarraSuperior {
+/* Estilo do Cabeçalho */
+.header-reservas {
+   background: linear-gradient(135deg, #1abc9c, #16a085); 
+    padding: 1rem 1.5rem;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
+    justify-content: center; /* Centraliza o conteúdo (o h1) */
+    position: relative; /* Essencial para posicionar o botão de voltar */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-bottom: 1px solid #e9ecef;
 }
 
-.tituloSite {
+.header-reservas h1 {
     margin: 0;
-    font-size: 24px;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #2c3e50;
 }
 
-.navegacaoPrincipal ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-}
-
-.navegacaoPrincipal ul li {
-    margin: 0 15px;
-}
-
-.navegacaoPrincipal ul li a {
-    color: #fff;
+.btn-voltar {
+    position: absolute;
+    left: 1.5rem; /* Posiciona o botão à esquerda */
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    color: #555;
     text-decoration: none;
-    font-weight: bold;
     transition: color 0.3s ease;
 }
 
-.navegacaoPrincipal ul li a:hover {
-    color: #e0e0e0;
+.btn-voltar:hover {
+    color: #007bff;
 }
 
-.minhasReservasBtn {
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
-    padding: 8px 15px;
-    border: 1px solid #fff;
-    border-radius: 5px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.minhasReservasBtn:hover {
+/* Estilos dos Cards de Reserva */
+.card-reserva-item {
     background-color: #fff;
-    color: #18AE90;
-}
-
-.conteudoMeio {
-    flex-grow: 1;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 20px;
+    height: 100%; /* Garante que os cards na mesma linha tenham a mesma altura */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid #e9ecef;
 }
 
-.tituloSecao {
-    font-size: 3em;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 30px;
-    text-align: center;
+.card-reserva-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.12);
 }
 
-.listaReservas {
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-    border-top: 1px solid #eee;
-}
-
-.itemReserva {
+.card-reserva-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 15px 0;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
+    gap: 0.75rem; /* Espaço entre o ícone e o título */
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #f0f0f0;
+    color: #007bff; /* Cor de destaque para o cabeçalho */
 }
 
-.detalhesItem {
-    display: flex;
-    flex-direction: column;
+.card-reserva-header i {
+    font-size: 1.2rem;
 }
 
-.detalhesItem p {
+.card-reserva-header h5 {
     margin: 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #343a40;
 }
 
-/* Modal */
-.modalReserva {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.6);
-    justify-content: center;
-    align-items: center;
+.card-reserva-body {
+    padding: 1.25rem;
+    flex-grow: 1; /* Faz o corpo crescer e empurrar o rodapé para baixo */
 }
 
-.conteudoModal {
-    background-color: #fefefe;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    width: 90%;
-    max-width: 400px;
-    position: relative;
-}
-
-.cabecalhoModal {
+.card-reserva-body p {
+    margin-bottom: 0.75rem;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #eee;
-    margin-bottom: 15px;
+    font-size: 0.95rem;
 }
 
-.corpoModal p {
-    margin-bottom: 10px;
-    color: #555;
-    line-height: 1.5;
-    font-weight: bold;
+.card-reserva-body p:last-child {
+    margin-bottom: 0;
 }
 
-.botaoFechar {
-    color: #aaa;
-    position: absolute;
-    top: 1px;
-    right: 5px;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    line-height: 1;
+.card-reserva-body i {
+    color: #6c757d;
+    width: 25px; /* Alinha os textos */
 }
 
-.botaoFechar:hover,
-.botaoFechar:focus {
-    color: #000;
-    text-decoration: none;
+.card-reserva-footer {
+    padding: 0.75rem 1.25rem;
+    background-color: #fcfcfc;
+    border-top: 1px solid #f0f0f0;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    text-align: right;
 }
 
-.listaParticipantes {
-    margin: 0;
-    padding-left: 20px;
-    color: #555;
-}
-.listaParticipantes li {
-    margin-bottom: 5px;
-    font-weight: bold;
+.btn-cancelar {
+    font-weight: 500;
 }

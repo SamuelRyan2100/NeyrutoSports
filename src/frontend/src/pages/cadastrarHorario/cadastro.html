@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastrar Horário</title>
     <link rel="stylesheet" href="styleCadastro.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
     <div class="form-container">
         <div class="back-container">
             <button class="back-button" onclick="window.location.href='../../index.html'">
-                ← Voltar
+                <i class="fas fa-arrow-left"></i> Voltar
             </button>
         </div>
 
@@ -49,79 +50,119 @@
             <div class="form-group">
                 <label for="limitePessoas">Limite de Pessoas</label>
                 <input type="number" id="limitePessoas" name="limitePessoas" min="1" value="10" required>
-                </div>
+            </div>
 
             <div class="form-group">
                 <label for="descricao">Descrição</label>
                 <textarea id="descricao" name="descricao" rows="5" placeholder="Ex: Preciso de mais 4 pessoas para completar o time..."></textarea>
-                </div>
+            </div>
 
             <button type="submit">Cadastrar</button>
         </form>
     </div>
 
     <script>
-        document.getElementById('cadastroForm').addEventListener('submit', async function(event) {
-            event.preventDefault(); // Impede o envio padrão do formulário
+        // Adicionamos um listener que executa assim que a página carrega
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // --- INÍCIO DA VERIFICAÇÃO DE LOGIN ---
+            const isUserLoggedIn = localStorage.getItem("logado") === "true";
 
-            // Coletar os dados do formulário
-            const data = document.getElementById('data').value;
-            const horarioInicio = document.getElementById('inicio').value + ':00';
-            const horarioFim = document.getElementById('fim').value + ':00';
-            const tipo = document.getElementById('tipo').value;
-            const nome = document.getElementById('nome').value;
-            const endereco = document.getElementById('endereco').value;
-            const limitePessoas = parseInt(document.getElementById('limitePessoas').value); // NOVO: Coleta o limite de pessoas
-
-            // Validação simples para o novo campo
-            if (isNaN(limitePessoas) || limitePessoas <= 0) {
-                alert('Por favor, insira um valor válido e maior que zero para o Limite de Pessoas.');
-                return;
+            if (!isUserLoggedIn) {
+                // Se o usuário NÃO estiver logado:
+                const formContainer = document.querySelector('.form-container');
+                // Limpa o container e insere a mensagem de acesso negado.
+                formContainer.innerHTML = `
+                    <div class="acesso-negado">
+                        <i class="fas fa-exclamation-triangle fa-3x"></i>
+                        <h2>Acesso Restrito</h2>
+                        <p>Você precisa estar logado para cadastrar um novo horário.</p>
+                        <button class="btn-login" onclick="window.location.href='../login/login.html'">Ir para a página de Login</button>
+                        <a href="../../index.html" class="link-voltar">Voltar para a Home</a>
+                    </div>
+                `;
+                return; // Impede a execução do resto do script
             }
+            // --- FIM DA VERIFICAÇÃO DE LOGIN ---
 
-            // Validação geral
-            if (!data || !horarioInicio || !horarioFim || !tipo || !nome || !endereco) {
-                alert('Por favor, preencha todos os campos obrigatórios.');
-                return;
-            }
+            // Se o usuário ESTIVER logado, o código abaixo (o seu código original) será executado normalmente.
+            document.getElementById('cadastroForm').addEventListener('submit', async function(event) {
+                event.preventDefault(); 
 
-            // Criar o objeto com os dados para enviar como JSON
-            const quadraData = {
-                data: data,
-                horarioInicio: horarioInicio,
-                horarioFim: horarioFim,
-                tipo: tipo,
-                nome: nome,
-                endereco: endereco,
-                limitePessoas: limitePessoas // NOVO: Inclui o limite de pessoas
-                // A descrição não está sendo enviada aqui porque não está no seu modelo Quadras.java
-                // Se você adicionar 'private String descricao;' em Quadras.java e na coluna do DB,
-                // pode incluir: descricao: document.getElementById('descricao').value,
-            };
+                const dataInput = document.getElementById('data').value;
+                const hoje = new Date();
+                const dataSelecionada = new Date(dataInput + 'T00:00:00'); // Adiciona T00:00:00 para evitar problemas de fuso
 
-            try {
-                const response = await fetch('http://localhost:8080/api/quadras/cadastrar', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(quadraData)
-                });
+                // Zera as horas do 'hoje' para comparar apenas as datas
+                hoje.setHours(0, 0, 0, 0);
 
-                const result = await response.json(); // O backend retorna um JSON agora
-
-                if (response.ok) {
-                    alert(result.mensagem || 'Horário cadastrado com sucesso!');
-                    document.getElementById('cadastroForm').reset(); // Limpa o formulário
-                    window.location.href = '../../index.html'; // Redireciona para a home
-                } else {
-                    alert(result.mensagem || `Erro ao cadastrar horário: ${response.status}`);
-                    console.error('Detalhes do erro:', result); // Loga o objeto de erro completo
+                // Validação da Data: Não pode ser no passado
+                if (dataSelecionada < hoje) {
+                    alert('Não é possível cadastrar um horário em uma data passada.');
+                    return;
                 }
-            } catch (error) {
-                console.error('Erro na requisição:', error);
-                alert('Não foi possível conectar ao servidor. Verifique se o backend está rodando.');
-            }
+
+                // Coletar os dados do formulário
+                const data = dataInput;
+                const horarioInicio = document.getElementById('inicio').value + ':00';
+                const horarioFim = document.getElementById('fim').value + ':00';
+                const tipo = document.getElementById('tipo').value;
+                const nome = document.getElementById('nome').value;
+                const endereco = document.getElementById('endereco').value;
+                const limitePessoas = parseInt(document.getElementById('limitePessoas').value);
+                // Adicione a descrição ao objeto de dados
+                const descricao = document.getElementById('descricao').value;
+
+                if (isNaN(limitePessoas) || limitePessoas <= 0) {
+                    alert('Por favor, insira um valor válido e maior que zero para o Limite de Pessoas.');
+                    return;
+                }
+
+                if (!data || !horarioInicio || !horarioFim || !tipo || !nome || !endereco) {
+                    alert('Por favor, preencha todos os campos obrigatórios.');
+                    return;
+                }
+
+                if (horarioFim <= horarioInicio) {
+                    alert('O horário de fim deve ser posterior ao horário de início.');
+                    return;
+                }
+
+                const quadraData = {
+                    data,
+                    horarioInicio,
+                    horarioFim,
+                    tipo,
+                    nome,
+                    endereco,
+                    limitePessoas,
+                    descricao // Enviando a descrição
+                };
+
+                try {
+                    const response = await fetch('http://localhost:8080/api/quadras/cadastrar', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(quadraData)
+                    });
+
+                    // Tenta ler a resposta como JSON, mesmo em caso de erro
+                    const result = await response.json(); 
+
+                    if (response.ok) {
+                        alert(result.mensagem || 'Horário cadastrado com sucesso!');
+                        document.getElementById('cadastroForm').reset(); 
+                        window.location.href = '../../index.html'; 
+                    } else {
+                        // Usa a mensagem de erro do backend, se houver
+                        alert(result.mensagem || `Erro ao cadastrar horário: ${response.status}`);
+                        console.error('Detalhes do erro:', result); 
+                    }
+                } catch (error) {
+                    console.error('Erro na requisição:', error);
+                    alert('Não foi possível conectar ao servidor. Verifique se o backend está rodando.');
+                }
+            });
         });
     </script>
 </body>

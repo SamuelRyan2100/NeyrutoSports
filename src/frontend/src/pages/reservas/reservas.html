@@ -4,167 +4,152 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minhas Reservas</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../style.css"> <link rel="stylesheet" href="reservas.css"> </head>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <link rel="stylesheet" href="styleReservas.css">
+</head>
 <body>
-    <div class="container my-5">
+    <header class="header-reservas">
+        <a href="../../index.html" class="btn-voltar" title="Voltar para a Home">
+            <i class="fas fa-arrow-left"></i>
+        </a>
         <h1>Minhas Reservas</h1>
+    </header>
+
+    <main class="container my-5">
         <div id="minhasReservasContainer" class="row g-4">
             <p>Carregando suas reservas...</p>
         </div>
-    </div>
+    </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
         document.addEventListener("DOMContentLoaded", async () => {
             const minhasReservasContainer = document.getElementById("minhasReservasContainer");
-            const usuarioId = localStorage.getItem("usuarioId"); // Pega o ID do usuário logado
+            const usuarioId = localStorage.getItem("usuarioId");
 
-            // Funções de formatação (copie do seu index.html se já tiver)
-            function formatarDataEHorario(data, horarioInicio) {
-                if (!data || !horarioInicio) {
-                    return "Horário Não Informado";
-                }
-                const [ano, mes, dia] = data.split('-').map(Number);
-                const dataEvento = new Date(ano, mes - 1, dia); // Mes é 0-indexed no JS
+            function formatarDataParaCard(dataString) {
+                if (!dataString) return "Data não informada";
+                const [ano, mes, dia] = dataString.split('-');
+                return `${dia}/${mes}/${ano}`;
+            }
 
-                const hoje = new Date();
-                const amanha = new Date();
-                amanha.setDate(hoje.getDate() + 1);
-
-                const diaEvento = dataEvento.getDate();
-                const mesEvento = dataEvento.getMonth();
-                const anoEvento = dataEvento.getFullYear();
-
-                const diaHoje = hoje.getDate();
-                const mesHoje = hoje.getMonth();
-                const anoHoje = hoje.getFullYear();
-
-                const diaAmanha = amanha.getDate();
-                const mesAmanha = amanha.getMonth();
-                const anoAmanha = amanha.getFullYear();
-
-                let prefixoData = "";
-                if (diaEvento === diaHoje && mesEvento === mesHoje && anoEvento === anoHoje) {
-                    prefixoData = "Hoje";
-                } else if (diaEvento === diaAmanha && mesEvento === mesAmanha && anoEvento === anoAmanha) {
-                    prefixoData = "Amanhã";
-                } else {
-                    prefixoData = `${String(diaEvento).padStart(2, '0')}/${String(mesEvento + 1).padStart(2, '0')}`;
-                }
-
-                const [hi_h, hi_m] = horarioInicio.split(':');
-                return `${prefixoData} ${hi_h}:${hi_m}`;
+            function formatarHoraParaCard(horaString) {
+                if (!horaString) return "Hora não informada";
+                return horaString.substring(0, 5); // Pega apenas HH:mm
             }
 
             async function fetchMinhasReservas() {
-                minhasReservasContainer.innerHTML = "<p>Carregando suas reservas...</p>";
+                minhasReservasContainer.innerHTML = `
+                    <div class="col-12 text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Carregando suas reservas...</p>
+                    </div>`;
 
                 if (!usuarioId) {
-                    minhasReservasContainer.innerHTML = "<p>Você precisa estar logado para ver suas reservas.</p>";
-                    // Opcional: Redirecionar para login
-                    // window.location.href = "../login/login.html";
+                    minhasReservasContainer.innerHTML = `
+                        <div class="col-12">
+                            <div class="alert alert-warning text-center">
+                                Você precisa estar logado para ver suas reservas. 
+                                <a href="../login/login.html" class="alert-link">Fazer Login</a>.
+                            </div>
+                        </div>`;
                     return;
                 }
 
                 try {
-                    // Chamar o endpoint específico para as reservas do usuário logado
                     const response = await fetch(`http://localhost:8080/api/reservas/usuario/${usuarioId}`);
-                    
                     if (!response.ok) {
-                        // Se o status for 404 (Not Found), pode ser que o usuário não exista no backend
-                        // Ou o endpoint não está retornando nada mesmo para IDs válidos sem reservas.
-                        if (response.status === 404) {
-                             minhasReservasContainer.innerHTML = "<p>Nenhum usuário encontrado com este ID ou sem reservas.</p>";
-                        } else {
-                            const errorText = await response.text();
-                            throw new Error(`Erro HTTP! status: ${response.status} - ${errorText}`);
-                        }
+                        throw new Error(`Erro ao buscar dados: ${response.status}`);
                     }
-
                     const reservas = await response.json();
                     displayReservas(reservas);
-
                 } catch (error) {
                     console.error("Erro ao buscar minhas reservas:", error);
-                    minhasReservasContainer.innerHTML = `<p>Não foi possível carregar suas reservas. Erro: ${error.message}</p>`;
+                    minhasReservasContainer.innerHTML = `
+                        <div class="col-12">
+                            <div class="alert alert-danger text-center">
+                                Não foi possível carregar suas reservas. Por favor, tente novamente mais tarde.
+                            </div>
+                        </div>`;
                 }
             }
 
             function displayReservas(reservas) {
-                minhasReservasContainer.innerHTML = ""; // Limpa o conteúdo
+                minhasReservasContainer.innerHTML = "";
                 if (reservas.length === 0) {
-                    minhasReservasContainer.innerHTML = "<p>Você ainda não tem nenhuma reserva.</p>";
+                    minhasReservasContainer.innerHTML = `
+                        <div class="col-12">
+                            <div class="alert alert-info text-center">
+                                Você ainda não fez nenhuma reserva. 
+                                <a href="../../index.html" class="alert-link">Que tal encontrar um horário agora?</a>
+                            </div>
+                        </div>`;
                     return;
                 }
 
+                // Ordena as reservas da mais recente para a mais antiga
+                reservas.sort((a, b) => new Date(b.data) - new Date(a.data));
+
                 reservas.forEach(reserva => {
+                    if (!reserva.quadra) return; // Pula se a reserva não tiver quadra
+
                     const colDiv = document.createElement("div");
-                    colDiv.className = "col-lg-4 col-md-6"; // Classes Bootstrap para layout
+                    colDiv.className = "col-lg-4 col-md-6 col-sm-12";
 
-                    const cardReservaDiv = document.createElement("div");
-                    cardReservaDiv.className = "card-evento"; // Reutilizando a classe do index, ou crie uma nova
-
-                    const cardContentDiv = document.createElement("div");
-
-                    const cardHeaderDiv = document.createElement("div");
-                    cardHeaderDiv.className = "card-header-evento";
-                    const h4TipoQuadra = document.createElement("h4");
-                    // Acesse o nome da quadra, se existir no objeto reserva retornado pelo backend
-                    h4TipoQuadra.textContent = reserva.quadra ? reserva.quadra.tipo : "Quadra Desconhecida";
-                    cardHeaderDiv.appendChild(h4TipoQuadra);
-
-                    const cardBodyDiv = document.createElement("div");
-                    cardBodyDiv.className = "card-body-evento";
-                    const pLocal = document.createElement("p");
-                    // Acesse o endereço da quadra
-                    pLocal.textContent = reserva.quadra ? reserva.quadra.endereco : "Endereço Não Informado";
-                    cardBodyDiv.appendChild(pLocal);
-
-                    cardContentDiv.appendChild(cardHeaderDiv);
-                    cardContentDiv.appendChild(cardBodyDiv);
-
-                    const cardFooterDiv = document.createElement("div");
-                    cardFooterDiv.className = "card-footer-evento";
-                    const pHorario = document.createElement("p");
-                    pHorario.className = "horario";
-                    // Use a função de formatação
-                    pHorario.textContent = formatarDataEHorario(reserva.data, reserva.horaInicio);
-                    cardFooterDiv.appendChild(pHorario);
-
-                    // Botão de Cancelar (opcional)
-                    const btnCancelar = document.createElement("button");
-                    btnCancelar.className = "btn btn-danger btn-sm mt-2"; // Bootstrap classes
-                    btnCancelar.textContent = "Cancelar Reserva";
-                    btnCancelar.onclick = async () => {
-                        if (confirm(`Tem certeza que deseja cancelar a reserva da quadra ${h4TipoQuadra.textContent} em ${pHorario.textContent}?`)) {
+                    const cardHTML = `
+                        <div class="card-reserva-item">
+                            <div class="card-reserva-header">
+                                <i class="fa-solid fa-volleyball"></i>
+                                <h5>${reserva.quadra.tipo || "Esporte"}</h5>
+                            </div>
+                            <div class="card-reserva-body">
+                                <p><strong><i class="fa-solid fa-location-dot me-2"></i>Local:</strong> ${reserva.quadra.nome || "Não informado"}</p>
+                                <p><small class="text-muted ms-4">${reserva.quadra.endereco || ""}</small></p>
+                                <p><strong><i class="fa-solid fa-calendar-day me-2"></i>Data:</strong> ${formatarDataParaCard(reserva.data)}</p>
+                                <p><strong><i class="fa-solid fa-clock me-2"></i>Horário:</strong> ${formatarHoraParaCard(reserva.horaInicio)} - ${formatarHoraParaCard(reserva.horaFim)}</p>
+                            </div>
+                            <div class="card-reserva-footer">
+                                <button class="btn btn-outline-danger btn-cancelar">
+                                    <i class="fa-solid fa-trash-can me-2"></i>Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    colDiv.innerHTML = cardHTML;
+                    
+                    // Adiciona o evento de clique para o botão de cancelar
+                    colDiv.querySelector('.btn-cancelar').addEventListener('click', async () => {
+                         if (confirm(`Tem certeza que deseja cancelar a reserva para ${reserva.quadra.tipo} no dia ${formatarDataParaCard(reserva.data)}?`)) {
                             try {
                                 const response = await fetch(`http://localhost:8080/api/reservas/deletar/${reserva.id}`, {
                                     method: 'DELETE'
                                 });
                                 if (response.ok) {
                                     alert("Reserva cancelada com sucesso!");
-                                    fetchMinhasReservas(); // Recarrega a lista após o cancelamento
+                                    fetchMinhasReservas(); // Recarrega a lista
                                 } else {
-                                    const errorText = await response.text();
-                                    alert(`Erro ao cancelar reserva: ${response.status} - ${errorText}`);
+                                    alert(`Erro ao cancelar reserva: ${response.status}`);
                                 }
                             } catch (error) {
-                                console.error("Erro de rede ao cancelar reserva:", error);
-                                alert("Não foi possível conectar ao servidor para cancelar a reserva.");
+                                console.error("Erro de rede ao cancelar:", error);
+                                alert("Não foi possível conectar ao servidor.");
                             }
                         }
-                    };
-                    cardFooterDiv.appendChild(btnCancelar);
+                    });
 
-                    cardReservaDiv.appendChild(cardContentDiv);
-                    cardReservaDiv.appendChild(cardFooterDiv);
-                    colDiv.appendChild(cardReservaDiv);
                     minhasReservasContainer.appendChild(colDiv);
                 });
             }
 
-            fetchMinhasReservas(); // Chama a função para buscar e exibir as reservas ao carregar a página
+            fetchMinhasReservas();
         });
     </script>
 </body>

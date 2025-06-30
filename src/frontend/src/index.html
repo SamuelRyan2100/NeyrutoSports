@@ -37,8 +37,8 @@
                             <span class="input-group-text bg-white border-end-0">
                                 <i class="fa-solid fa-magnifying-glass"></i>
                             </span>
-                            <input type="text" class="form-control border-start-0" placeholder="Pesquisar"
-                                aria-label="Pesquisar">
+                            <input type="text" class="form-control border-start-0" placeholder="Pesquisar esporte..."
+                                aria-label="Pesquisar" id="searchBar">
                         </div>
                     </div>
 
@@ -91,9 +91,9 @@
 
     <script>
         // LEITURA DO LOCAL STORAGE NO TOPO DO SCRIPT
-        // Mantemos a leitura do usuarioId aqui, pois ele é necessário para a requisição de reserva.
-        // A variável 'logado' será substituída pela checagem da presença do botão Perfil.
         const usuarioId = localStorage.getItem("usuarioId");
+        let allQuadras = []; // Variável para armazenar todas as quadras carregadas
+        let userReservations = []; // NOVA: Armazenará as reservas do usuário logado
 
         // --- DEBUG: Verifique os valores lidos do localStorage ---
         console.log("--- DEBUG do Index.html ---");
@@ -109,14 +109,13 @@
         // Função para deslogar
         function logout() {
             localStorage.removeItem("logado");
-            localStorage.removeItem("usuarioId"); // Remove o ID também
+            localStorage.removeItem("usuarioId");
             window.location.reload();
         }
 
         // Lógica para mostrar/esconder botões de login/perfil
-        // Esta parte do código garante que o botão "Perfil" é criado se o usuário estiver logado.
-        document.addEventListener("DOMContentLoaded", () => {
-            const logadoLocalStorage = localStorage.getItem("logado"); // Leitura aqui para a lógica de exibição
+        document.addEventListener("DOMContentLoaded", async () => { // Adicionado 'async' aqui
+            const logadoLocalStorage = localStorage.getItem("logado");
             if (logadoLocalStorage === "true") {
                 const loginBtnDesktop = document.getElementById('loginBtnDesktop');
                 if (loginBtnDesktop) {
@@ -179,7 +178,7 @@
                     logoutLinkMobile.textContent = "Sair";
                     logoutLinkMobile.onclick = logout;
                     logoutLiMobile.appendChild(logoutLinkMobile);
-                    dropdownMenuMobile.appendChild(logoutLiMobile);
+                    dropdownMenuMobile.appendChild(logoutLinkMobile);
 
                     liPerfilMobile.appendChild(btnPerfilMobile);
                     liPerfilMobile.appendChild(dropdownMenuMobile);
@@ -187,8 +186,8 @@
                 }
             }
 
-            // --- Script para buscar e exibir as quadras e a funcionalidade de reservar ---
             const quadrasContainer = document.getElementById("quadrasContainer");
+            const searchBar = document.getElementById("searchBar");
 
             function formatarDataEHorario(data, horarioInicio) {
                 if (!data || !horarioInicio) {
@@ -229,18 +228,15 @@
 
             // FUNÇÃO PRINCIPAL PARA RESERVAR
             async function reservarQuadra(quadra) {
-                // Nova verificação: Checa se o botão de perfil (desktop ou mobile) existe no DOM
                 const perfilBtnDesktopExists = document.querySelector(".d-md-flex.gap-2 .dropdown button.dropdown-toggle");
                 const perfilBtnMobileExists = document.querySelector("#menuSuperior ul.navbar-nav .dropdown button.dropdown-toggle");
 
-                // SE nenhum dos botões de perfil existe, o usuário não está "logado" na UI.
                 if (!perfilBtnDesktopExists && !perfilBtnMobileExists) {
                     alert("Você precisa estar logado para fazer uma reserva!");
                     window.location.href = "pages/login/login.html";
                     return;
                 }
 
-                // E GARANTA que o usuarioId está disponível, pois ele é necessário para a requisição
                 if (!usuarioId) {
                     alert("Erro: ID do usuário não encontrado. Por favor, faça login novamente.");
                     window.location.href = "pages/login/login.html";
@@ -256,7 +252,7 @@
                     data: quadra.data,
                     horaInicio: quadra.horarioInicio,
                     horaFim: quadra.horarioFim,
-                    usuario: { id: parseInt(usuarioId) }, // Converte para inteiro aqui
+                    usuario: { id: parseInt(usuarioId) },
                     quadra: { id: quadra.id }
                 };
 
@@ -271,7 +267,7 @@
 
                     if (response.ok) {
                         alert("Reserva realizada com sucesso!");
-                        window.location.href = "pages/reservas/reservas.html";
+                        await fetchAndDisplayAllData(); // Chama a função principal para atualizar TUDO
                     } else if (response.status === 404) {
                         alert("Erro: Usuário ou Quadra não encontrados no sistema. Verifique o ID do usuário.");
                         console.error("Erro 404: ", await response.text());
@@ -279,8 +275,7 @@
                         const errorText = await response.text();
                         alert(`Erro na requisição: Dados inválidos para a reserva. Detalhes: ${errorText}`);
                         console.error("Erro 400:", errorText);
-                    }
-                    else {
+                    } else {
                         const errorText = await response.text();
                         alert(`Erro ao fazer reserva: ${response.status} - ${errorText}`);
                         console.error("Erro na reserva:", response.status, errorText);
@@ -292,31 +287,40 @@
             }
 
 
-            // Função para buscar as quadras da API
-            async function fetchQuadras() {
-                quadrasContainer.innerHTML = "<p>Carregando quadras disponíveis...</p>";
+            // NOVA FUNÇÃO: Busca as reservas do usuário logado
+            async function fetchUserReservations() {
+                if (!usuarioId) {
+                    userReservations = []; // Limpa se não houver usuário logado
+                    return;
+                }
                 try {
-                    const response = await fetch("http://localhost:8080/api/quadras/todasQuadras");
+                    const response = await fetch(`http://localhost:8080/api/reservas/usuario/${usuarioId}`);
                     if (!response.ok) {
                         throw new Error(`Erro HTTP! status: ${response.status}`);
                     }
-                    const quadras = await response.json();
-                    displayQuadras(quadras);
+                    userReservations = await response.json();
+                    console.log("Reservas do usuário carregadas:", userReservations);
                 } catch (error) {
-                    console.error("Erro ao buscar as quadras:", error);
-                    quadrasContainer.innerHTML = "<p>Não foi possível carregar as quadras. Verifique se o backend está rodando.</p>";
+                    console.error("Erro ao buscar reservas do usuário:", error);
+                    userReservations = []; // Garante que a lista esteja vazia em caso de erro
                 }
             }
 
             // Função para exibir as quadras no HTML
-            function displayQuadras(quadras) {
-                quadrasContainer.innerHTML = "";
-                if (quadras.length === 0) {
-                    quadrasContainer.innerHTML = "<p>Nenhuma quadra disponível no momento.</p>";
+            // Agora aceita a lista de quadras a serem exibidas e as reservas do usuário
+            function displayQuadras(quadrasToDisplay, userReservations) {
+                quadrasContainer.innerHTML = ""; // Limpa o conteúdo existente
+
+                if (quadrasToDisplay.length === 0) {
+                    quadrasContainer.innerHTML = "<p>Nenhuma quadra disponível para o termo pesquisado.</p>";
                     return;
                 }
 
-                quadras.forEach(quadra => {
+                const reservedQuadraIds = new Set(userReservations.map(reserva => reserva.quadra.id));
+                console.log("IDs das quadras já reservadas pelo usuário:", Array.from(reservedQuadraIds));
+
+
+                quadrasToDisplay.forEach(quadra => {
                     const colDiv = document.createElement("div");
                     colDiv.className = "col-lg-4 col-md-6";
 
@@ -333,9 +337,37 @@
 
                     const cardBodyEventoDiv = document.createElement("div");
                     cardBodyEventoDiv.className = "card-body-evento";
+
+                    const pNomeEspaco = document.createElement("p");
+                    pNomeEspaco.textContent = `Nome: ${quadra.nome || "Não Informado"}`;
+                    cardBodyEventoDiv.appendChild(pNomeEspaco);
+
                     const pLocal = document.createElement("p");
-                    pLocal.textContent = quadra.endereco || "Endereço Não Informado";
+                    pLocal.textContent = `Endereço: ${quadra.endereco || "Endereço Não Informado"}`;
                     cardBodyEventoDiv.appendChild(pLocal);
+
+                    const pessoasAtuais = quadra.pessoasAtuais || 0;
+                    const limitePessoas = quadra.limitePessoas || 0;
+                    const vagasRestantes = limitePessoas - pessoasAtuais;
+                    const isLotada = vagasRestantes <= 0;
+
+                    // NOVA VERIFICAÇÃO: Se a quadra já foi reservada pelo usuário atual
+                    const isReservedByUser = reservedQuadraIds.has(quadra.id);
+                    console.log(`Quadra ID ${quadra.id}: isReservedByUser = ${isReservedByUser}`);
+
+
+                    const pVagas = document.createElement("p");
+                    pVagas.innerHTML = `Vagas: <span class="${isLotada ? 'text-danger fw-bold' : 'text-success'}">
+                        ${isLotada ? 'Lotado' : `${vagasRestantes} de ${limitePessoas} vagas`}
+                    </span>`;
+                    cardBodyEventoDiv.appendChild(pVagas);
+
+                    if (quadra.descricao) {
+                        const pDescricao = document.createElement("p");
+                        pDescricao.textContent = `Descrição: ${quadra.descricao}`;
+                        cardBodyEventoDiv.appendChild(pDescricao);
+                    }
+
 
                     cardContentDiv.appendChild(cardHeaderEventoDiv);
                     cardContentDiv.appendChild(cardBodyEventoDiv);
@@ -344,17 +376,22 @@
                     cardFooterEventoDiv.className = "card-footer-evento";
                     const pHorario = document.createElement("p");
                     pHorario.className = "horario";
-                    pHorario.textContent = formatarDataEHorario(quadra.data, quadra.horarioInicio);
+                    pHorario.textContent = formatarDataEHorario(quadra.data, quadra.horarioInicio) + ` - ${quadra.horarioFim ? quadra.horarioFim.substring(0,5) : 'Fim Não Informado'}`;
                     cardFooterEventoDiv.appendChild(pHorario);
+
 
                     const aParticipar = document.createElement("a");
                     aParticipar.href = "#";
-                    aParticipar.className = "btn btn-participar";
-                    aParticipar.textContent = "Participar";
-                    aParticipar.addEventListener('click', (event) => {
-                        event.preventDefault();
-                        reservarQuadra(quadra);
-                    });
+                    // Adiciona a classe 'btn-reserved' e 'disabled' se já reservado pelo usuário OU se estiver lotado
+                    aParticipar.className = `btn btn-participar ${isLotada || isReservedByUser ? 'disabled' : ''} ${isReservedByUser ? 'btn-reserved' : ''}`;
+                    aParticipar.textContent = isReservedByUser ? "Reservado" : (isLotada ? "Lotado" : "Participar");
+
+                    if (!isLotada && !isReservedByUser) { // Adiciona o evento de click apenas se não estiver lotado E não estiver reservado pelo usuário
+                        aParticipar.addEventListener('click', (event) => {
+                            event.preventDefault();
+                            reservarQuadra(quadra);
+                        });
+                    }
                     cardFooterEventoDiv.appendChild(aParticipar);
 
                     cardEventoDiv.appendChild(cardContentDiv);
@@ -364,9 +401,55 @@
                 });
             }
 
-            fetchQuadras();
+            // NOVA FUNÇÃO: Orquestra o carregamento de dados e a exibição
+            async function fetchAndDisplayAllData() {
+                quadrasContainer.innerHTML = "<p>Carregando quadras disponíveis...</p>"; // Mensagem de carregamento
+
+                try {
+                    // 1. Carrega todas as quadras
+                    const quadrasResponse = await fetch("http://localhost:8080/api/quadras/todasQuadras");
+                    if (!quadrasResponse.ok) {
+                        throw new Error(`Erro HTTP ao buscar quadras! status: ${quadrasResponse.status}`);
+                    }
+                    allQuadras = await quadrasResponse.json();
+                    console.log("Todas as quadras carregadas:", allQuadras);
+
+                    // 2. Carrega as reservas do usuário (se logado)
+                    await fetchUserReservations(); // Popula userReservations
+
+                    // 3. Exibe as quadras, considerando as reservas do usuário
+                    // Inicialmente, mostra todas as quadras. A pesquisa será feita em cima de 'allQuadras'.
+                    displayQuadras(allQuadras, userReservations);
+
+                } catch (error) {
+                    console.error("Erro ao carregar dados:", error);
+                    quadrasContainer.innerHTML = "<p>Não foi possível carregar as quadras. Verifique se o backend está rodando e a conexão de rede.</p>";
+                }
+            }
+
+
+            // Event listener para a barra de pesquisa - MANTÉM A FILTRAGEM
+            searchBar.addEventListener('input', function() {
+                const searchTerm = searchBar.value.toLowerCase().trim();
+
+                let quadrasToDisplayAfterSearch = [];
+                if (searchTerm === "") {
+                    quadrasToDisplayAfterSearch = allQuadras; // Se a pesquisa vazia, mostra todas
+                } else {
+                    quadrasToDisplayAfterSearch = allQuadras.filter(quadra => {
+                        return quadra.tipo.toLowerCase().includes(searchTerm) ||
+                               (quadra.nome && quadra.nome.toLowerCase().includes(searchTerm)) ||
+                               (quadra.endereco && quadra.endereco.toLowerCase().includes(searchTerm));
+                    });
+                }
+                // Chama displayQuadras com a lista filtrada E as reservas do usuário
+                displayQuadras(quadrasToDisplayAfterSearch, userReservations);
+            });
+
+            // Chama a função principal para carregar e exibir os dados quando a página carrega
+            fetchAndDisplayAllData();
         });
     </script>
 </body>
 
-</html>
+</html> 
