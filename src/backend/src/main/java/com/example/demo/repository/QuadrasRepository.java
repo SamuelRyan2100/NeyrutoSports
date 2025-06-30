@@ -11,5 +11,6 @@ import com.example.demo.model.Quadras;
 public interface QuadrasRepository extends JpaRepository<Quadras, Integer> {
 	Quadras findByNome(String nome);
 
+	
 	//List<Quadras> findAll();
 }

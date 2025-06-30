@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastrar Horário</title>
     <link rel="stylesheet" href="styleCadastro.css">
-    </head>
+</head>
 <body>
     <div class="form-container">
         <div class="back-container">
@@ -15,35 +15,46 @@
         </div>
 
         <h2>Cadastrar Horário</h2>
-        <form id="cadastroForm"> <div class="form-group">
+        <form id="cadastroForm">
+            <div class="form-group">
                 <label for="data">Data</label>
                 <input type="date" id="data" name="data" required>
             </div>
 
             <div class="form-group">
                 <label for="inicio">Horário de Início</label>
-                <input type="time" id="inicio" name="horarioInicio" required> </div>
+                <input type="time" id="inicio" name="horarioInicio" required>
+            </div>
 
             <div class="form-group">
                 <label for="fim">Horário de Fim</label>
-                <input type="time" id="fim" name="horarioFim" required> </div>
-
-            <div class="form-group">
-                <label for="tipo">Tipo de Quadra</label> <input type="text" id="tipo" name="tipo" placeholder="Ex: Futebol, Basquete" required>
+                <input type="time" id="fim" name="horarioFim" required>
             </div>
 
             <div class="form-group">
-                <label for="nome">Nome da Quadra</label> <input type="text" id="nome" name="nome" placeholder="Ex: Quadra A, Ginásio Principal" required>
+                <label for="tipo">Esporte</label>
+                <input type="text" id="tipo" name="tipo" placeholder="Ex: Futebol, Basquete" required>
             </div>
 
             <div class="form-group">
-                <label for="endereco">Endereço</label> <input type="text" id="endereco" name="endereco" placeholder="Ex: Rua Principal, 123" required>
+                <label for="nome">Nome do Espaço Esportivo</label>
+                <input type="text" id="nome" name="nome" placeholder="Ex: Quadra A, Ginásio Principal" required>
             </div>
+
+            <div class="form-group">
+                <label for="endereco">Endereço</label>
+                <input type="text" id="endereco" name="endereco" placeholder="Ex: Rua Principal, 123" required>
+            </div>
+
+            <div class="form-group">
+                <label for="limitePessoas">Limite de Pessoas</label>
+                <input type="number" id="limitePessoas" name="limitePessoas" min="1" value="10" required>
+                </div>
 
             <div class="form-group">
                 <label for="descricao">Descrição</label>
-                <textarea id="descricao" name="descricao" rows="5" placeholder="Ex: Preciso de mais 4 pessoas para completar o time..." required></textarea>
-            </div>
+                <textarea id="descricao" name="descricao" rows="5" placeholder="Ex: Preciso de mais 4 pessoas para completar o time..."></textarea>
+                </div>
 
             <button type="submit">Cadastrar</button>
         </form>
@@ -55,13 +66,20 @@
 
             // Coletar os dados do formulário
             const data = document.getElementById('data').value;
-            const horarioInicio = document.getElementById('inicio').value + ':00'; // Adiciona ":00" para segundos, se necessário
-            const horarioFim = document.getElementById('fim').value + ':00'; // Adiciona ":00" para segundos, se necessário
-            const tipo = document.getElementById('tipo').value; // Novo campo
-            const nome = document.getElementById('nome').value; // Novo campo
-            const endereco = document.getElementById('endereco').value; // Mudei de 'local' para 'endereco'
+            const horarioInicio = document.getElementById('inicio').value + ':00';
+            const horarioFim = document.getElementById('fim').value + ':00';
+            const tipo = document.getElementById('tipo').value;
+            const nome = document.getElementById('nome').value;
+            const endereco = document.getElementById('endereco').value;
+            const limitePessoas = parseInt(document.getElementById('limitePessoas').value); // NOVO: Coleta o limite de pessoas
 
-            // Validação simples (você pode adicionar mais validações)
+            // Validação simples para o novo campo
+            if (isNaN(limitePessoas) || limitePessoas <= 0) {
+                alert('Por favor, insira um valor válido e maior que zero para o Limite de Pessoas.');
+                return;
+            }
+
+            // Validação geral
             if (!data || !horarioInicio || !horarioFim || !tipo || !nome || !endereco) {
                 alert('Por favor, preencha todos os campos obrigatórios.');
                 return;
@@ -72,13 +90,13 @@
                 data: data,
                 horarioInicio: horarioInicio,
                 horarioFim: horarioFim,
-                tipo: tipo, // Inclui o tipo
-                nome: nome,   // Inclui o nome
-                endereco: endereco // Usando 'endereco'
-                // A descrição não está no seu modelo Quadras.java,
-                // então não deve ser enviada se não tiver um campo correspondente.
-                // Se você adicionar 'private String descricao;' em Quadras.java,
-                // pode incluir: descricao: document.getElementById('descricao').value
+                tipo: tipo,
+                nome: nome,
+                endereco: endereco,
+                limitePessoas: limitePessoas // NOVO: Inclui o limite de pessoas
+                // A descrição não está sendo enviada aqui porque não está no seu modelo Quadras.java
+                // Se você adicionar 'private String descricao;' em Quadras.java e na coluna do DB,
+                // pode incluir: descricao: document.getElementById('descricao').value,
             };
 
             try {
@@ -87,16 +105,18 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(quadraData) // Converte o objeto JavaScript para uma string JSON
+                    body: JSON.stringify(quadraData)
                 });
 
+                const result = await response.json(); // O backend retorna um JSON agora
+
                 if (response.ok) {
-                    alert('Horário cadastrado com sucesso!');
+                    alert(result.mensagem || 'Horário cadastrado com sucesso!');
+                    document.getElementById('cadastroForm').reset(); // Limpa o formulário
                     window.location.href = '../../index.html'; // Redireciona para a home
                 } else {
-                    const errorBody = await response.text(); // Pega o corpo da resposta de erro
-                    alert('Erro ao cadastrar horário: ' + errorBody);
-                    console.error('Detalhes do erro:', errorBody);
+                    alert(result.mensagem || `Erro ao cadastrar horário: ${response.status}`);
+                    console.error('Detalhes do erro:', result); // Loga o objeto de erro completo
                 }
             } catch (error) {
                 console.error('Erro na requisição:', error);

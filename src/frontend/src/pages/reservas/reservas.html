@@ -1,91 +1,171 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reservas</title>
-    <link rel="stylesheet" href="styleReservas.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-</head>
+    <title>Minhas Reservas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../style.css"> <link rel="stylesheet" href="reservas.css"> </head>
 <body>
-    <header class="barraSuperior">
-        <div class="conteudoBarraSuperior">
-            <h1 class="tituloSite">SportsMarc</h1>
-            <nav class="navegacaoPrincipal">
-                <ul>
-                    <li><a href="#">Início</a></li>
-                    <li><a href="#">Perfil</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <main class="conteudoMeio">
-        <p class="tituloSecao">Reservas</p>
-
-        <div class="listaReservas">
-            <div class="itemReserva">
-                <div class="detalhesItem">
-                    🏀 Quadra de Basquete<br>
-                    Local: Centro Esportivo
-                </div>
-                15:00 - 16:00
-            </div>
-
-            <div class="itemReserva">
-                <div class="detalhesItem">
-                    ⚽ Campo de Futebol<br>
-                    Local: Parque Municipal
-                </div>
-                12/12/2025
-            </div>
-
-            <div class="itemReserva">
-                <div class="detalhesItem">
-                    🎾 Quadra de Tênis<br>
-                    Local: Clube de Tênis
-                </div>
-                12/12/2025
-            </div>
-            <div class="itemReserva">
-                <div class="detalhesItem">
-                    🏐 Quadra de Vôlei<br>
-                    Local: Clube de Vôlei
-                </div>
-                12/12/2025
-            </div>
-        </div>
-    </main>
-
-    <div id="modalReserva" class="modalReserva">
-        <div class="conteudoModal">
-            <span class="botaoFechar">&times;</span>
-            <div class="cabecalhoModal">
-                <div class="detalhesItem">
-                    🏀 Quadra de Basquete<br>
-                    Local: Centro Esportivo
-                </div>
-                15:00 - 16:00
-            </div>
-            <div class="corpoModal">
-                <p>Participantes:</p>
-                <ul class="listaParticipantes">
-                <li>Ycaro</li>
-                <li>Juan</li>
-                <li>Samuel</li>
-                <li>Guilherme</li>
-                <li>Isaac</li>
-                </ul>
-            </div>
+    <div class="container my-5">
+        <h1>Minhas Reservas</h1>
+        <div id="minhasReservasContainer" class="row g-4">
+            <p>Carregando suas reservas...</p>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const minhasReservasContainer = document.getElementById("minhasReservasContainer");
+            const usuarioId = localStorage.getItem("usuarioId"); // Pega o ID do usuário logado
+
+            // Funções de formatação (copie do seu index.html se já tiver)
+            function formatarDataEHorario(data, horarioInicio) {
+                if (!data || !horarioInicio) {
+                    return "Horário Não Informado";
+                }
+                const [ano, mes, dia] = data.split('-').map(Number);
+                const dataEvento = new Date(ano, mes - 1, dia); // Mes é 0-indexed no JS
+
+                const hoje = new Date();
+                const amanha = new Date();
+                amanha.setDate(hoje.getDate() + 1);
+
+                const diaEvento = dataEvento.getDate();
+                const mesEvento = dataEvento.getMonth();
+                const anoEvento = dataEvento.getFullYear();
+
+                const diaHoje = hoje.getDate();
+                const mesHoje = hoje.getMonth();
+                const anoHoje = hoje.getFullYear();
+
+                const diaAmanha = amanha.getDate();
+                const mesAmanha = amanha.getMonth();
+                const anoAmanha = amanha.getFullYear();
+
+                let prefixoData = "";
+                if (diaEvento === diaHoje && mesEvento === mesHoje && anoEvento === anoHoje) {
+                    prefixoData = "Hoje";
+                } else if (diaEvento === diaAmanha && mesEvento === mesAmanha && anoEvento === anoAmanha) {
+                    prefixoData = "Amanhã";
+                } else {
+                    prefixoData = `${String(diaEvento).padStart(2, '0')}/${String(mesEvento + 1).padStart(2, '0')}`;
+                }
+
+                const [hi_h, hi_m] = horarioInicio.split(':');
+                return `${prefixoData} ${hi_h}:${hi_m}`;
+            }
+
+            async function fetchMinhasReservas() {
+                minhasReservasContainer.innerHTML = "<p>Carregando suas reservas...</p>";
+
+                if (!usuarioId) {
+                    minhasReservasContainer.innerHTML = "<p>Você precisa estar logado para ver suas reservas.</p>";
+                    // Opcional: Redirecionar para login
+                    // window.location.href = "../login/login.html";
+                    return;
+                }
+
+                try {
+                    // Chamar o endpoint específico para as reservas do usuário logado
+                    const response = await fetch(`http://localhost:8080/api/reservas/usuario/${usuarioId}`);
+                    
+                    if (!response.ok) {
+                        // Se o status for 404 (Not Found), pode ser que o usuário não exista no backend
+                        // Ou o endpoint não está retornando nada mesmo para IDs válidos sem reservas.
+                        if (response.status === 404) {
+                             minhasReservasContainer.innerHTML = "<p>Nenhum usuário encontrado com este ID ou sem reservas.</p>";
+                        } else {
+                            const errorText = await response.text();
+                            throw new Error(`Erro HTTP! status: ${response.status} - ${errorText}`);
+                        }
+                    }
+
+                    const reservas = await response.json();
+                    displayReservas(reservas);
+
+                } catch (error) {
+                    console.error("Erro ao buscar minhas reservas:", error);
+                    minhasReservasContainer.innerHTML = `<p>Não foi possível carregar suas reservas. Erro: ${error.message}</p>`;
+                }
+            }
+
+            function displayReservas(reservas) {
+                minhasReservasContainer.innerHTML = ""; // Limpa o conteúdo
+                if (reservas.length === 0) {
+                    minhasReservasContainer.innerHTML = "<p>Você ainda não tem nenhuma reserva.</p>";
+                    return;
+                }
+
+                reservas.forEach(reserva => {
+                    const colDiv = document.createElement("div");
+                    colDiv.className = "col-lg-4 col-md-6"; // Classes Bootstrap para layout
+
+                    const cardReservaDiv = document.createElement("div");
+                    cardReservaDiv.className = "card-evento"; // Reutilizando a classe do index, ou crie uma nova
+
+                    const cardContentDiv = document.createElement("div");
+
+                    const cardHeaderDiv = document.createElement("div");
+                    cardHeaderDiv.className = "card-header-evento";
+                    const h4TipoQuadra = document.createElement("h4");
+                    // Acesse o nome da quadra, se existir no objeto reserva retornado pelo backend
+                    h4TipoQuadra.textContent = reserva.quadra ? reserva.quadra.tipo : "Quadra Desconhecida";
+                    cardHeaderDiv.appendChild(h4TipoQuadra);
+
+                    const cardBodyDiv = document.createElement("div");
+                    cardBodyDiv.className = "card-body-evento";
+                    const pLocal = document.createElement("p");
+                    // Acesse o endereço da quadra
+                    pLocal.textContent = reserva.quadra ? reserva.quadra.endereco : "Endereço Não Informado";
+                    cardBodyDiv.appendChild(pLocal);
+
+                    cardContentDiv.appendChild(cardHeaderDiv);
+                    cardContentDiv.appendChild(cardBodyDiv);
+
+                    const cardFooterDiv = document.createElement("div");
+                    cardFooterDiv.className = "card-footer-evento";
+                    const pHorario = document.createElement("p");
+                    pHorario.className = "horario";
+                    // Use a função de formatação
+                    pHorario.textContent = formatarDataEHorario(reserva.data, reserva.horaInicio);
+                    cardFooterDiv.appendChild(pHorario);
+
+                    // Botão de Cancelar (opcional)
+                    const btnCancelar = document.createElement("button");
+                    btnCancelar.className = "btn btn-danger btn-sm mt-2"; // Bootstrap classes
+                    btnCancelar.textContent = "Cancelar Reserva";
+                    btnCancelar.onclick = async () => {
+                        if (confirm(`Tem certeza que deseja cancelar a reserva da quadra ${h4TipoQuadra.textContent} em ${pHorario.textContent}?`)) {
+                            try {
+                                const response = await fetch(`http://localhost:8080/api/reservas/deletar/${reserva.id}`, {
+                                    method: 'DELETE'
+                                });
+                                if (response.ok) {
+                                    alert("Reserva cancelada com sucesso!");
+                                    fetchMinhasReservas(); // Recarrega a lista após o cancelamento
+                                } else {
+                                    const errorText = await response.text();
+                                    alert(`Erro ao cancelar reserva: ${response.status} - ${errorText}`);
+                                }
+                            } catch (error) {
+                                console.error("Erro de rede ao cancelar reserva:", error);
+                                alert("Não foi possível conectar ao servidor para cancelar a reserva.");
+                            }
+                        }
+                    };
+                    cardFooterDiv.appendChild(btnCancelar);
+
+                    cardReservaDiv.appendChild(cardContentDiv);
+                    cardReservaDiv.appendChild(cardFooterDiv);
+                    colDiv.appendChild(cardReservaDiv);
+                    minhasReservasContainer.appendChild(colDiv);
+                });
+            }
+
+            fetchMinhasReservas(); // Chama a função para buscar e exibir as reservas ao carregar a página
+        });
+    </script>
 </body>
 </html>

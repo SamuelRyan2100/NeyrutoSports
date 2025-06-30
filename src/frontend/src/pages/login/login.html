@@ -1,36 +1,36 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Login</title>
 
-  <link rel="stylesheet" href="login.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="login.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 </head>
 
 <body>
-  <div id="form-login" class="login-box">
-    <form id="formLogin">
-      <h1 id="titulo-form">Login</h1>
+    <div id="form-login" class="login-box">
+        <form id="formLogin">
+            <h1 id="titulo-form">Login</h1>
 
-      <div class="input-box">
-        <input id="email" placeholder="Email" type="email" required />
-        <i class="fa-regular fa-user"></i>
-      </div>
+            <div class="input-box">
+                <input id="email" placeholder="Email" type="email" required />
+                <i class="fa-regular fa-user"></i>
+            </div>
 
-      <div class="input-box">
-        <input id="senha" placeholder="Senha" type="password" required />
-        <i class="fa-solid fa-lock"></i>
-      </div>
+            <div class="input-box">
+                <input id="senha" placeholder="Senha" type="password" required />
+                <i class="fa-solid fa-lock"></i>
+            </div>
 
-      <div class="input-box" id="box-nome" style="display: none;">
-        <input id="nome" placeholder="Nome completo" type="text" />
-        <i class="fa-solid fa-user-tag"></i>
-      </div>
+            <div class="input-box" id="box-nome" style="display: none;">
+                <input id="nome" placeholder="Nome completo" type="text" />
+                <i class="fa-solid fa-user-tag"></i>
+            </div>
 
             <div class="LembrarEsqueci">
                 <label>
@@ -40,91 +40,128 @@
                 <a href="#">Esqueci senha</a>
             </div>
 
-      <button type="submit" id="btnLogin" class="login">Login</button>
-      <button type="button" id="btnCadastrar" class="login mt-2" style="display: none;">Cadastrar</button>
+            <button type="submit" id="btnLogin" class="login">Login</button>
+            <button type="button" id="btnCadastrar" class="login mt-2" style="display: none;">Cadastrar</button>
 
-      <div class="registrarConta">
-        <p id="troca-form">
-          Não tem uma conta? <a href="#" onclick="mostrarCadastro()">Cadastre-se</a>
-        </p>
-      </div>
-    </form>
-  </div>
+            <div class="registrarConta">
+                <p id="troca-form">
+                    Não tem uma conta? <a href="#" onclick="mostrarCadastro()">Cadastre-se</a>
+                </p>
+            </div>
+        </form>
+    </div>
 
-  <script>
-    const nomeInput = document.getElementById("nome");
-    const emailInput = document.getElementById("email");
-    const senhaInput = document.getElementById("senha");
-    const boxNome = document.getElementById("box-nome");
-    const btnLogin = document.getElementById("btnLogin");
-    const btnCadastrar = document.getElementById("btnCadastrar");
-    const tituloForm = document.getElementById("titulo-form");
-    const trocaForm = document.getElementById("troca-form");
+    <script>
+        const nomeInput = document.getElementById("nome");
+        const emailInput = document.getElementById("email");
+        const senhaInput = document.getElementById("senha");
+        const boxNome = document.getElementById("box-nome");
+        const btnLogin = document.getElementById("btnLogin");
+        const btnCadastrar = document.getElementById("btnCadastrar");
+        const tituloForm = document.getElementById("titulo-form");
+        const trocaForm = document.getElementById("troca-form");
 
-    // Estado atual: login
-    let modoCadastro = false;
+        // Estado atual: login
+        let modoCadastro = false;
 
-    document.getElementById("formLogin").addEventListener("submit", async function (e) {
-      e.preventDefault();
-      const email = emailInput.value;
-      const senha = senhaInput.value;
+        document.getElementById("formLogin").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const email = emailInput.value;
+            const senha = senhaInput.value;
 
-      if (!modoCadastro) {
-        // Login
-        const resposta = await fetch("http://localhost:8080/api/usuarios/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, senha })
+            if (!modoCadastro) {
+                // Login
+                try {
+                    const resposta = await fetch("http://localhost:8080/api/usuarios/login", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email, senha })
+                    });
+
+                    // Verifica se a resposta HTTP foi um sucesso (status 2xx)
+                    if (resposta.ok) {
+                        const data = await resposta.json(); // Tenta ler a resposta como JSON
+                        alert(data.mensagem || "Login bem-sucedido!"); // Exibe a mensagem do backend, se houver
+
+                        // *** LINHA CRUCIAL ADICIONADA/MODIFICADA AQUI ***
+                        if (data && data.id) { // Assume que o backend retorna um JSON com o campo 'id'
+                            localStorage.setItem("logado", "true");
+                            localStorage.setItem("usuarioId", data.id.toString()); // SALVA O ID DO USUÁRIO
+                            window.location.href = "../../index.html"; // Redireciona para a home
+                        } else {
+                            alert("Login bem-sucedido, mas o ID do usuário não foi retornado pelo servidor.");
+                            console.error("Dados do usuário incompletos após login:", data);
+                            // Opcional: mesmo assim redirecionar ou deixar na página de login
+                            // window.location.href = "../../index.html";
+                        }
+                    } else {
+                        // Se a resposta não for OK, tenta ler o erro como texto (ou JSON, dependendo do seu backend)
+                        const errorText = await resposta.text();
+                        alert(`Erro no login: ${errorText}`);
+                        console.error("Erro no login:", resposta.status, errorText);
+                    }
+                } catch (error) {
+                    console.error("Erro de rede ou processamento no login:", error);
+                    alert("Não foi possível conectar ao servidor ou processar o login.");
+                }
+            }
         });
-        const texto = await resposta.text();
-        alert(texto);
 
-        // Se o login for bem-sucedido, defina "logado" como true e redirecione
-        if (resposta.ok) { // Verifica se a resposta HTTP foi um sucesso (status 2xx)
-          localStorage.setItem("logado", "true");
-          window.location.href = "../../index.html"; // Redireciona para a home
+        btnCadastrar.addEventListener("click", async function () {
+            const email = emailInput.value;
+            const senha = senhaInput.value;
+            const nome = nomeInput.value;
+
+            try {
+                const resposta = await fetch("http://localhost:8080/api/usuarios/cadastro", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, senha, nome })
+                });
+
+                if (resposta.ok) { // Verifica se a resposta HTTP foi um sucesso (status 2xx)
+                    const data = await resposta.json(); // Tenta ler a resposta como JSON para pegar o ID
+                    alert(data.mensagem || "Cadastro realizado com sucesso!");
+
+                    // *** LINHA CRUCIAL ADICIONADA/MODIFICADA AQUI PARA CADASTRO TAMBÉM ***
+                    if (data && data.id) { // Assume que o backend retorna o ID do usuário recém-cadastrado
+                        localStorage.setItem("logado", "true");
+                        localStorage.setItem("usuarioId", data.id.toString()); // SALVA O ID DO USUÁRIO
+                        window.location.href = "../../index.html"; // Redireciona para a home
+                    } else {
+                        alert("Cadastro bem-sucedido, mas o ID do usuário não foi retornado pelo servidor.");
+                        console.error("Dados do usuário incompletos após cadastro:", data);
+                        // Opcional: mesmo assim redirecionar ou deixar na página de login
+                        // window.location.href = "../../index.html";
+                    }
+                } else {
+                    const errorText = await resposta.text();
+                    alert(`Erro no cadastro: ${errorText}`);
+                    console.error("Erro no cadastro:", resposta.status, errorText);
+                }
+            } catch (error) {
+                console.error("Erro de rede ou processamento no cadastro:", error);
+                alert("Não foi possível conectar ao servidor ou processar o cadastro.");
+            }
+        });
+
+        function mostrarCadastro() {
+            modoCadastro = true;
+            tituloForm.textContent = "Cadastro";
+            boxNome.style.display = "block";
+            btnLogin.style.display = "none";
+            btnCadastrar.style.display = "block";
+            trocaForm.innerHTML = `Já tem uma conta? <a href="#" onclick="mostrarLogin()">Fazer login</a>`;
         }
-      }
-    });
 
-    btnCadastrar.addEventListener("click", async function () {
-      const email = emailInput.value;
-      const senha = senhaInput.value;
-      const nome = nomeInput.value;
-
-      const resposta = await fetch("http://localhost:8080/api/usuarios/cadastro", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, senha, nome })
-      });
-
-      const texto = await resposta.text();
-      alert(texto);
-
-      // Se o cadastro for bem-sucedido, defina "logado" como true e redirecione
-      if (resposta.ok) { // Verifica se a resposta HTTP foi um sucesso (status 2xx)
-        localStorage.setItem("logado", "true");
-        window.location.href = "../../index.html"; // Redireciona para a home
-      }
-    });
-
-    function mostrarCadastro() {
-      modoCadastro = true;
-      tituloForm.textContent = "Cadastro";
-      boxNome.style.display = "block";
-      btnLogin.style.display = "none";
-      btnCadastrar.style.display = "block";
-      trocaForm.innerHTML = `Já tem uma conta? <a href="#" onclick="mostrarLogin()">Fazer login</a>`;
-    }
-
-    function mostrarLogin() {
-      modoCadastro = false;
-      tituloForm.textContent = "Login";
-      boxNome.style.display = "none";
-      btnLogin.style.display = "block";
-      btnCadastrar.style.display = "none";
-      trocaForm.innerHTML = `Não tem uma conta? <a href="#" onclick="mostrarCadastro()">Cadastre-se</a>`;
-    }
-  </script>
+        function mostrarLogin() {
+            modoCadastro = false;
+            tituloForm.textContent = "Login";
+            boxNome.style.display = "none";
+            btnLogin.style.display = "block";
+            btnCadastrar.style.display = "none";
+            trocaForm.innerHTML = `Não tem uma conta? <a href="#" onclick="mostrarCadastro()">Cadastre-se</a>`;
+        }
+    </script>
 </body>
 </html>

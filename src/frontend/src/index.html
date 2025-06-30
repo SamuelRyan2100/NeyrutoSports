@@ -44,7 +44,7 @@
 
                     <div class="position-absolute top-0 end-0 p-3 d-none d-md-flex gap-2">
                         <a href="pages/cadastrarHorario/cadastro.html" class="btn btn-outline-light">Cadastrar Horário</a>
-                        <button class="btn btn-outline-light">Reservas</button>
+                        <a href="pages/reservas/reservas.html" class="btn btn-outline-light">Reservas</a>
                         <a href="pages/login/login.html" class="btn btn-outline-light" id="loginBtnDesktop">Login</a>
                     </div>
 
@@ -65,7 +65,7 @@
                                 <a href="pages/cadastrarHorario/cadastro.html" class="btn btn-outline-light w-100">Cadastrar Horário</a>
                             </li>
                             <li class="nav-item mb-2">
-                                <button class="btn btn-outline-light w-100">Reservas</button>
+                                <a href="pages/reservas/reservas.html" class="btn btn-outline-light w-100">Reservas</a>
                             </li>
                             <li class="nav-item" id="loginItemMobile">
                                 <a href="pages/login/login.html" class="btn btn-outline-light w-100">Login</a>
@@ -81,7 +81,8 @@
 
     <div class="container my-5">
         <div class="row g-4" id="quadrasContainer">
-            </div>
+            <p>Carregando quadras disponíveis...</p>
+        </div>
     </div>
 
 
@@ -89,106 +90,113 @@
         crossorigin="anonymous"></script>
 
     <script>
-        const logado = localStorage.getItem("logado");
+        // LEITURA DO LOCAL STORAGE NO TOPO DO SCRIPT
+        // Mantemos a leitura do usuarioId aqui, pois ele é necessário para a requisição de reserva.
+        // A variável 'logado' será substituída pela checagem da presença do botão Perfil.
+        const usuarioId = localStorage.getItem("usuarioId");
+
+        // --- DEBUG: Verifique os valores lidos do localStorage ---
+        console.log("--- DEBUG do Index.html ---");
+        console.log("Valor de 'usuarioId' no localStorage:", usuarioId);
+        if (usuarioId && !isNaN(parseInt(usuarioId))) {
+            console.log("Usuario ID (como número):", parseInt(usuarioId));
+        } else {
+            console.warn("Usuario ID não encontrado ou não é um número válido.");
+        }
+        console.log("--------------------------");
+        // --- FIM DEBUG ---
 
         // Função para deslogar
         function logout() {
-            localStorage.removeItem("logado"); // Remove o item do localStorage
-            window.location.reload(); // Recarrega a página para atualizar o estado
+            localStorage.removeItem("logado");
+            localStorage.removeItem("usuarioId"); // Remove o ID também
+            window.location.reload();
         }
 
-        if (logado === "true") {
-            // Esconde botão "Login" no desktop
-            const loginBtnDesktop = document.getElementById('loginBtnDesktop');
-            if (loginBtnDesktop) {
-                loginBtnDesktop.style.display = "none";
-            }
-
-            // Esconde botão "Login" no mobile
-            const loginItemMobile = document.getElementById('loginItemMobile');
-            if (loginItemMobile) {
-                loginItemMobile.style.display = "none";
-            }
-
-            // --- Para Desktop ---
-            const botoesDesktop = document.querySelector(".d-md-flex.gap-2");
-            if (botoesDesktop) {
-                // Cria um grupo de dropdown para o botão Perfil
-                const dropdownDivDesktop = document.createElement("div");
-                dropdownDivDesktop.className = "dropdown";
-
-                const btnPerfilDesktop = document.createElement("button");
-                btnPerfilDesktop.className = "btn btn-outline-light dropdown-toggle";
-                btnPerfilDesktop.setAttribute("type", "button");
-                btnPerfilDesktop.setAttribute("data-bs-toggle", "dropdown");
-                btnPerfilDesktop.setAttribute("aria-expanded", "false");
-                btnPerfilDesktop.textContent = "Perfil";
-
-                const dropdownMenuDesktop = document.createElement("ul");
-                dropdownMenuDesktop.className = "dropdown-menu dropdown-menu-dark"; // Adiciona dropdown-menu-dark para tema escuro
-
-                const logoutLiDesktop = document.createElement("li");
-                const logoutLinkDesktop = document.createElement("a");
-                logoutLinkDesktop.className = "dropdown-item";
-                logoutLinkDesktop.href = "#"; // Evita navegação
-                logoutLinkDesktop.textContent = "Sair";
-                logoutLinkDesktop.onclick = logout; // Chama a função logout
-                logoutLiDesktop.appendChild(logoutLinkDesktop);
-                dropdownMenuDesktop.appendChild(logoutLiDesktop);
-
-                dropdownDivDesktop.appendChild(btnPerfilDesktop);
-                dropdownDivDesktop.appendChild(dropdownMenuDesktop);
-
-                // Adiciona o dropdown do perfil, se não quiser que ele substitua o botão de Cadastrar Horário
-                // Se o botão de cadastrar horário já for um link, ele será mantido
-                // Certifique-se de que a ordem dos elementos esteja correta no seu CSS/layout
-                botoesDesktop.appendChild(dropdownDivDesktop);
-            }
-
-            // --- Para Mobile ---
-            const menuMobile = document.querySelector("#menuSuperior ul.navbar-nav");
-            if (menuMobile) {
-                const liPerfilMobile = document.createElement("li");
-                liPerfilMobile.className = "nav-item mt-2 dropdown"; // Adiciona a classe dropdown
-
-                const btnPerfilMobile = document.createElement("button");
-                btnPerfilMobile.className = "btn btn-outline-light dropdown-toggle w-100";
-                btnPerfilMobile.setAttribute("type", "button");
-                btnPerfilMobile.setAttribute("data-bs-toggle", "dropdown");
-                btnPerfilMobile.setAttribute("aria-expanded", "false");
-                btnPerfilMobile.textContent = "Perfil";
-
-                const dropdownMenuMobile = document.createElement("ul");
-                dropdownMenuMobile.className = "dropdown-menu dropdown-menu-dark"; // Adiciona dropdown-menu-dark para tema escuro
-
-                const logoutLiMobile = document.createElement("li");
-                const logoutLinkMobile = document.createElement("a");
-                logoutLinkMobile.className = "dropdown-item";
-                logoutLinkMobile.href = "#"; // Evita navegação
-                logoutLinkMobile.textContent = "Sair";
-                logoutLinkMobile.onclick = logout; // Chama a função logout
-                logoutLiMobile.appendChild(logoutLinkMobile);
-                dropdownMenuMobile.appendChild(logoutLiMobile);
-
-                liPerfilMobile.appendChild(btnPerfilMobile);
-                liPerfilMobile.appendChild(dropdownMenuMobile);
-                menuMobile.appendChild(liPerfilMobile);
-            }
-        }
-
-        // --- Novo script para buscar e exibir as quadras ---
+        // Lógica para mostrar/esconder botões de login/perfil
+        // Esta parte do código garante que o botão "Perfil" é criado se o usuário estiver logado.
         document.addEventListener("DOMContentLoaded", () => {
+            const logadoLocalStorage = localStorage.getItem("logado"); // Leitura aqui para a lógica de exibição
+            if (logadoLocalStorage === "true") {
+                const loginBtnDesktop = document.getElementById('loginBtnDesktop');
+                if (loginBtnDesktop) {
+                    loginBtnDesktop.style.display = "none";
+                }
+                const loginItemMobile = document.getElementById('loginItemMobile');
+                if (loginItemMobile) {
+                    loginItemMobile.style.display = "none";
+                }
+
+                const botoesDesktop = document.querySelector(".d-md-flex.gap-2");
+                if (botoesDesktop) {
+                    const dropdownDivDesktop = document.createElement("div");
+                    dropdownDivDesktop.className = "dropdown";
+
+                    const btnPerfilDesktop = document.createElement("button");
+                    btnPerfilDesktop.className = "btn btn-outline-light dropdown-toggle";
+                    btnPerfilDesktop.setAttribute("type", "button");
+                    btnPerfilDesktop.setAttribute("data-bs-toggle", "dropdown");
+                    btnPerfilDesktop.setAttribute("aria-expanded", "false");
+                    btnPerfilDesktop.textContent = "Perfil";
+
+                    const dropdownMenuDesktop = document.createElement("ul");
+                    dropdownMenuDesktop.className = "dropdown-menu dropdown-menu-dark";
+
+                    const logoutLiDesktop = document.createElement("li");
+                    const logoutLinkDesktop = document.createElement("a");
+                    logoutLinkDesktop.className = "dropdown-item";
+                    logoutLinkDesktop.href = "#";
+                    logoutLinkDesktop.textContent = "Sair";
+                    logoutLinkDesktop.onclick = logout;
+                    logoutLiDesktop.appendChild(logoutLinkDesktop);
+                    dropdownMenuDesktop.appendChild(logoutLiDesktop);
+
+                    dropdownDivDesktop.appendChild(btnPerfilDesktop);
+                    dropdownDivDesktop.appendChild(dropdownMenuDesktop);
+
+                    botoesDesktop.appendChild(dropdownDivDesktop);
+                }
+
+                const menuMobile = document.querySelector("#menuSuperior ul.navbar-nav");
+                if (menuMobile) {
+                    const liPerfilMobile = document.createElement("li");
+                    liPerfilMobile.className = "nav-item mt-2 dropdown";
+
+                    const btnPerfilMobile = document.createElement("button");
+                    btnPerfilMobile.className = "btn btn-outline-light dropdown-toggle w-100";
+                    btnPerfilMobile.setAttribute("type", "button");
+                    btnPerfilMobile.setAttribute("data-bs-toggle", "dropdown");
+                    btnPerfilMobile.setAttribute("aria-expanded", "false");
+                    btnPerfilMobile.textContent = "Perfil";
+
+                    const dropdownMenuMobile = document.createElement("ul");
+                    dropdownMenuMobile.className = "dropdown-menu dropdown-menu-dark";
+
+                    const logoutLiMobile = document.createElement("li");
+                    const logoutLinkMobile = document.createElement("a");
+                    logoutLinkMobile.className = "dropdown-item";
+                    logoutLinkMobile.href = "#";
+                    logoutLinkMobile.textContent = "Sair";
+                    logoutLinkMobile.onclick = logout;
+                    logoutLiMobile.appendChild(logoutLinkMobile);
+                    dropdownMenuMobile.appendChild(logoutLiMobile);
+
+                    liPerfilMobile.appendChild(btnPerfilMobile);
+                    liPerfilMobile.appendChild(dropdownMenuMobile);
+                    menuMobile.appendChild(liPerfilMobile);
+                }
+            }
+
+            // --- Script para buscar e exibir as quadras e a funcionalidade de reservar ---
             const quadrasContainer = document.getElementById("quadrasContainer");
 
-            // Função para formatar a data e hora, agora usando APENAS horarioInicio
-            function formatarDataEHorario(data, horarioInicio) { // Removido horarioFim
+            function formatarDataEHorario(data, horarioInicio) {
                 if (!data || !horarioInicio) {
                     return "Horário Não Informado";
                 }
 
-                // Parse da data (formatoYYYY-MM-DD do LocalDate)
                 const [ano, mes, dia] = data.split('-').map(Number);
-                const dataEvento = new Date(ano, mes - 1, dia); // Mês é 0-indexed no JS Date
+                const dataEvento = new Date(ano, mes - 1, dia);
 
                 const hoje = new Date();
                 const amanha = new Date();
@@ -215,16 +223,78 @@
                     prefixoData = `${String(diaEvento).padStart(2, '0')}/${String(mesEvento + 1).padStart(2, '0')}`;
                 }
 
-                // Formatar horarioInicio (ele já vem como string "HH:MM:SS" ou "HH:MM" do LocalTime)
                 const [hi_h, hi_m] = horarioInicio.split(':');
-
-                // Retorna no formato "Hoje 18:00" ou "DD/MM 18:00"
                 return `${prefixoData} ${hi_h}:${hi_m}`;
+            }
+
+            // FUNÇÃO PRINCIPAL PARA RESERVAR
+            async function reservarQuadra(quadra) {
+                // Nova verificação: Checa se o botão de perfil (desktop ou mobile) existe no DOM
+                const perfilBtnDesktopExists = document.querySelector(".d-md-flex.gap-2 .dropdown button.dropdown-toggle");
+                const perfilBtnMobileExists = document.querySelector("#menuSuperior ul.navbar-nav .dropdown button.dropdown-toggle");
+
+                // SE nenhum dos botões de perfil existe, o usuário não está "logado" na UI.
+                if (!perfilBtnDesktopExists && !perfilBtnMobileExists) {
+                    alert("Você precisa estar logado para fazer uma reserva!");
+                    window.location.href = "pages/login/login.html";
+                    return;
+                }
+
+                // E GARANTA que o usuarioId está disponível, pois ele é necessário para a requisição
+                if (!usuarioId) {
+                    alert("Erro: ID do usuário não encontrado. Por favor, faça login novamente.");
+                    window.location.href = "pages/login/login.html";
+                    return;
+                }
+
+                const confirmacao = confirm(`Deseja realmente reservar a quadra ${quadra.nome || quadra.tipo} para ${formatarDataEHorario(quadra.data, quadra.horarioInicio)}?`);
+                if (!confirmacao) {
+                    return;
+                }
+
+                const reservaData = {
+                    data: quadra.data,
+                    horaInicio: quadra.horarioInicio,
+                    horaFim: quadra.horarioFim,
+                    usuario: { id: parseInt(usuarioId) }, // Converte para inteiro aqui
+                    quadra: { id: quadra.id }
+                };
+
+                try {
+                    const response = await fetch("http://localhost:8080/api/reservas/criar", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(reservaData)
+                    });
+
+                    if (response.ok) {
+                        alert("Reserva realizada com sucesso!");
+                        window.location.href = "pages/reservas/reservas.html";
+                    } else if (response.status === 404) {
+                        alert("Erro: Usuário ou Quadra não encontrados no sistema. Verifique o ID do usuário.");
+                        console.error("Erro 404: ", await response.text());
+                    } else if (response.status === 400) {
+                        const errorText = await response.text();
+                        alert(`Erro na requisição: Dados inválidos para a reserva. Detalhes: ${errorText}`);
+                        console.error("Erro 400:", errorText);
+                    }
+                    else {
+                        const errorText = await response.text();
+                        alert(`Erro ao fazer reserva: ${response.status} - ${errorText}`);
+                        console.error("Erro na reserva:", response.status, errorText);
+                    }
+                } catch (error) {
+                    console.error("Erro de rede ao tentar reservar:", error);
+                    alert("Não foi possível conectar ao servidor para fazer a reserva. Verifique se o backend está rodando.");
+                }
             }
 
 
             // Função para buscar as quadras da API
             async function fetchQuadras() {
+                quadrasContainer.innerHTML = "<p>Carregando quadras disponíveis...</p>";
                 try {
                     const response = await fetch("http://localhost:8080/api/quadras/todasQuadras");
                     if (!response.ok) {
@@ -234,13 +304,13 @@
                     displayQuadras(quadras);
                 } catch (error) {
                     console.error("Erro ao buscar as quadras:", error);
-                    quadrasContainer.innerHTML = "<p>Não foi possível carregar as quadras. Tente novamente mais tarde.</p>";
+                    quadrasContainer.innerHTML = "<p>Não foi possível carregar as quadras. Verifique se o backend está rodando.</p>";
                 }
             }
 
             // Função para exibir as quadras no HTML
             function displayQuadras(quadras) {
-                quadrasContainer.innerHTML = ""; // Limpa os cards existentes (os estáticos que você tinha)
+                quadrasContainer.innerHTML = "";
                 if (quadras.length === 0) {
                     quadrasContainer.innerHTML = "<p>Nenhuma quadra disponível no momento.</p>";
                     return;
@@ -253,7 +323,7 @@
                     const cardEventoDiv = document.createElement("div");
                     cardEventoDiv.className = "card-evento";
 
-                    const cardContentDiv = document.createElement("div"); // Agrupa header e body
+                    const cardContentDiv = document.createElement("div");
 
                     const cardHeaderEventoDiv = document.createElement("div");
                     cardHeaderEventoDiv.className = "card-header-evento";
@@ -281,6 +351,10 @@
                     aParticipar.href = "#";
                     aParticipar.className = "btn btn-participar";
                     aParticipar.textContent = "Participar";
+                    aParticipar.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        reservarQuadra(quadra);
+                    });
                     cardFooterEventoDiv.appendChild(aParticipar);
 
                     cardEventoDiv.appendChild(cardContentDiv);
@@ -290,7 +364,6 @@
                 });
             }
 
-            // Chama a função para buscar as quadras quando a página carregar
             fetchQuadras();
         });
     </script>

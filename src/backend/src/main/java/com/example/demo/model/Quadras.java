@@ -6,91 +6,79 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
 import java.time.LocalDate;
-import java.time.LocalTime; 
+import java.time.LocalTime;
 
 @Entity
 @Table(name="quadras")
 public class Quadras {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="id", nullable=false)
-	private int id;
-	
-	@Column(name="tipo", length=50, nullable=false)
-	private String tipo;
-	
-	@Column(name="endereco", length=200, nullable=false)
-	private String endereco;
-	
-    @Column(name = "horario_inicio") 
-    private LocalTime horarioInicio; 
-	
-    @Column(name="horario_fim")
-	private LocalTime horarioFim;
-    
-    @Column(name="data")
-    private LocalDate data;
-    
-    @Column(name="nome", length=100, nullable=false)
+
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @Column(name="id", nullable=false)
+    private int id;
+
+    @Column(name="nome", nullable=false, length=100) // <--- CONFIRMAR SE VOCÊ TEM ESTE CAMPO
     private String nome;
-	
-	public int getId() {
-		return id;
-	}
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    @Column(name="tipo", nullable=false, length=100) // Ex: "Futsal", "Basquete"
+    private String tipo;
 
-	public String getTipo() {
-		return tipo;
-	}
+    @Column(name="endereco", nullable=false, length=255)
+    private String endereco;
 
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
-	}
+    @Column(name="data", nullable=false)
+    private java.time.LocalDate data;
 
-	public String getEndereco() {
-		return endereco;
-	}
+    @Column(name="horario_inicio", nullable=false)
+    private java.time.LocalTime horarioInicio;
 
-	public void setEndereco(String endereco) {
-		this.endereco = endereco;
-	}
+    @Column(name="horario_fim", nullable=false)
+    private java.time.LocalTime horarioFim;
 
-	public LocalTime getHorarioInicio() {
-		return horarioInicio;
-	}
+    @Column(name="limite_pessoas", nullable=false)
+    private int limitePessoas;
 
-	public void setHorarioInicio(LocalTime horarioInicio) {
-		this.horarioInicio = horarioInicio;
-	}
+    // Construtor padrão
+    public Quadras() {
+    }
 
-	public LocalTime getHorarioFim() {
-		return horarioFim;
-	}
+    // Getters e Setters para todos os campos, incluindo 'nome' e 'limitePessoas'
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-	public void setHorarioFim(LocalTime horarioFim) {
-		this.horarioFim = horarioFim;
-	}
+    public String getNome() { return nome; } // <--- GETTER PARA 'NOME'
+    public void setNome(String nome) { this.nome = nome; } // <--- SETTER PARA 'NOME'
 
-	public LocalDate getData() {
-		return data;
-	}
+    public String getTipo() { return tipo; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
 
-	public void setData(LocalDate data) {
-		this.data = data;
-	}
+    public String getEndereco() { return endereco; }
+    public void setEndereco(String endereco) { this.endereco = endereco; }
 
+    public java.time.LocalDate getData() { return data; }
+    public void setData(java.time.LocalDate data) { this.data = data; }
 
+    public java.time.LocalTime getHorarioInicio() { return horarioInicio; }
+    public void setHorarioInicio(java.time.LocalTime horarioInicio) { this.horarioInicio = horarioInicio; }
 
-	public String getNome() {
-		return nome;
-	}
+    public java.time.LocalTime getHorarioFim() { return horarioFim; }
+    public void setHorarioFim(java.time.LocalTime horarioFim) { this.horarioFim = horarioFim; }
 
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
+    public int getLimitePessoas() { return limitePessoas; }
+    public void setLimitePessoas(int limitePessoas) { this.limitePessoas = limitePessoas; }
+
+    @Override
+    public String toString() {
+        return "Quadras{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' + // Incluir no toString
+                ", tipo='" + tipo + '\'' +
+                ", endereco='" + endereco + '\'' +
+                ", data=" + data +
+                ", horarioInicio=" + horarioInicio +
+                ", horarioFim=" + horarioFim +
+                ", limitePessoas=" + limitePessoas +
+                '}';
+    }
 }
