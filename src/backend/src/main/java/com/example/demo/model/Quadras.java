@@ -39,14 +39,12 @@ public class Quadras {
     @Column(name="limite_pessoas", nullable=false)
     private int limitePessoas;
 
-    // NOVO CAMPO: Para contar as pessoas que já reservaram
+    
     @Column(name="pessoas_atuais", nullable=false) // Deve ser NOT NULL no BD
     private int pessoasAtuais = 0; // Valor inicial para novas quadras
 
-    // Você não incluiu 'descricao' na sua entidade, mas está no HTML.
-    // Se quiser salvar a descrição, adicione:
-    // @Column(name="descricao", length=255)
-    // private String descricao;
+    @Column(name="ativa", nullable = false)
+    private boolean ativa = true;
 
 
     // Construtor padrão

@@ -37,7 +37,7 @@
                     <input type="checkbox">
                     lembrar senha
                 </label>
-                <a href="#">Esqueci senha</a>
+            <!--<a href="#">Esqueci senha</a>-->
             </div>
 
             <button type="submit" id="btnLogin" class="login">Login</button>
@@ -61,49 +61,46 @@
         const tituloForm = document.getElementById("titulo-form");
         const trocaForm = document.getElementById("troca-form");
 
-        // Estado atual: login
+        // Estado atual do formulário
         let modoCadastro = false;
 
         document.getElementById("formLogin").addEventListener("submit", async function (e) {
             e.preventDefault();
+            // Esta função só será chamada para o botão de Login, pois o de cadastro é 'type="button"'
+            
+            if (modoCadastro) return; // Garante que a submissão padrão só funcione para login
+
             const email = emailInput.value;
             const senha = senhaInput.value;
 
-            if (!modoCadastro) {
-                // Login
-                try {
-                    const resposta = await fetch("http://localhost:8080/api/usuarios/login", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ email, senha })
-                    });
+            // --- LÓGICA DE LOGIN ---
+            try {
+                const resposta = await fetch("http://localhost:8080/api/usuarios/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, senha })
+                });
 
-                    // Verifica se a resposta HTTP foi um sucesso (status 2xx)
-                    if (resposta.ok) {
-                        const data = await resposta.json(); // Tenta ler a resposta como JSON
-                        alert(data.mensagem || "Login bem-sucedido!"); // Exibe a mensagem do backend, se houver
+                if (resposta.ok) {
+                    const data = await resposta.json();
+                    alert(data.mensagem || "Login bem-sucedido!");
 
-                        // *** LINHA CRUCIAL ADICIONADA/MODIFICADA AQUI ***
-                        if (data && data.id) { // Assume que o backend retorna um JSON com o campo 'id'
-                            localStorage.setItem("logado", "true");
-                            localStorage.setItem("usuarioId", data.id.toString()); // SALVA O ID DO USUÁRIO
-                            window.location.href = "../../index.html"; // Redireciona para a home
-                        } else {
-                            alert("Login bem-sucedido, mas o ID do usuário não foi retornado pelo servidor.");
-                            console.error("Dados do usuário incompletos após login:", data);
-                            // Opcional: mesmo assim redirecionar ou deixar na página de login
-                            // window.location.href = "../../index.html";
-                        }
+                    if (data && data.id) {
+                        localStorage.setItem("logado", "true");
+                        localStorage.setItem("usuarioId", data.id.toString());
+                        window.location.href = "../../index.html";
                     } else {
-                        // Se a resposta não for OK, tenta ler o erro como texto (ou JSON, dependendo do seu backend)
-                        const errorText = await resposta.text();
-                        alert(`Erro no login: ${errorText}`);
-                        console.error("Erro no login:", resposta.status, errorText);
+                        alert("Login bem-sucedido, mas o ID do usuário não foi retornado pelo servidor.");
+                        console.error("Dados do usuário incompletos após login:", data);
                     }
-                } catch (error) {
-                    console.error("Erro de rede ou processamento no login:", error);
-                    alert("Não foi possível conectar ao servidor ou processar o login.");
+                } else {
+                    const errorText = await resposta.text();
+                    alert(`Erro no login: ${errorText}`);
+                    console.error("Erro no login:", resposta.status, errorText);
                 }
+            } catch (error) {
+                console.error("Erro de rede ou processamento no login:", error);
+                alert("Não foi possível conectar ao servidor ou processar o login.");
             }
         });
 
@@ -112,6 +109,14 @@
             const senha = senhaInput.value;
             const nome = nomeInput.value;
 
+            // *** NOVA VALIDAÇÃO ADICIONADA AQUI ***
+            // Verifica se os campos obrigatórios para cadastro não estão vazios.
+            if (!nome.trim() || !email.trim() || !senha.trim()) {
+                alert("Por favor, preencha todos os campos: Nome, Email e Senha.");
+                return; // Interrompe a execução se algum campo estiver vazio
+            }
+
+            // --- LÓGICA DE CADASTRO ---
             try {
                 const resposta = await fetch("http://localhost:8080/api/usuarios/cadastro", {
                     method: "POST",
@@ -119,20 +124,17 @@
                     body: JSON.stringify({ email, senha, nome })
                 });
 
-                if (resposta.ok) { // Verifica se a resposta HTTP foi um sucesso (status 2xx)
-                    const data = await resposta.json(); // Tenta ler a resposta como JSON para pegar o ID
+                if (resposta.ok) {
+                    const data = await resposta.json();
                     alert(data.mensagem || "Cadastro realizado com sucesso!");
 
-                    // *** LINHA CRUCIAL ADICIONADA/MODIFICADA AQUI PARA CADASTRO TAMBÉM ***
-                    if (data && data.id) { // Assume que o backend retorna o ID do usuário recém-cadastrado
+                    if (data && data.id) {
                         localStorage.setItem("logado", "true");
-                        localStorage.setItem("usuarioId", data.id.toString()); // SALVA O ID DO USUÁRIO
-                        window.location.href = "../../index.html"; // Redireciona para a home
+                        localStorage.setItem("usuarioId", data.id.toString());
+                        window.location.href = "../../index.html";
                     } else {
                         alert("Cadastro bem-sucedido, mas o ID do usuário não foi retornado pelo servidor.");
                         console.error("Dados do usuário incompletos após cadastro:", data);
-                        // Opcional: mesmo assim redirecionar ou deixar na página de login
-                        // window.location.href = "../../index.html";
                     }
                 } else {
                     const errorText = await resposta.text();
@@ -149,6 +151,7 @@
             modoCadastro = true;
             tituloForm.textContent = "Cadastro";
             boxNome.style.display = "block";
+            nomeInput.required = true; // *** MODIFICADO: Torna o campo nome obrigatório
             btnLogin.style.display = "none";
             btnCadastrar.style.display = "block";
             trocaForm.innerHTML = `Já tem uma conta? <a href="#" onclick="mostrarLogin()">Fazer login</a>`;
@@ -158,6 +161,7 @@
             modoCadastro = false;
             tituloForm.textContent = "Login";
             boxNome.style.display = "none";
+            nomeInput.required = false; // *** MODIFICADO: Remove a obrigatoriedade do campo nome
             btnLogin.style.display = "block";
             btnCadastrar.style.display = "none";
             trocaForm.innerHTML = `Não tem uma conta? <a href="#" onclick="mostrarCadastro()">Cadastre-se</a>`;
