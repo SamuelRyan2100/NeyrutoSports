@@ -1,62 +1,137 @@
-/* --- Estilos para a tela de Acesso Negado --- */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background-color: #f0f2f5;
+}
 
+.form-container {
+  max-width: 600px;
+  margin: 40px auto;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.back-container {
+  margin-bottom: 20px;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.back-button i {
+  margin-right: 8px;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="time"],
+input[type="number"],
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+button[type="submit"] {
+  width: 100%;
+  background-color: #28a745;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover {
+  background-color: #218838;
+}
+
+/* Acesso negado */
 .acesso-negado {
-    text-align: center;
-    padding: 30px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    max-width: 500px;
-    margin: 20px auto; 
+  text-align: center;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  max-width: 500px;
+  margin: 20px auto;
 }
 
 .acesso-negado .fa-exclamation-triangle {
-    color: #f0ad4e; /* Laranja de aviso */
-    margin-bottom: 20px;
+  color: #f0ad4e;
+  margin-bottom: 20px;
 }
 
 .acesso-negado h2 {
-    color: #333;
-    margin-bottom: 15px;
+  color: #333;
+  margin-bottom: 15px;
 }
 
 .acesso-negado p {
-    font-size: 1.1em;
-    color: #555;
-    margin-bottom: 30px;
+  font-size: 1.1em;
+  color: #555;
+  margin-bottom: 30px;
 }
 
 .acesso-negado .btn-login {
-    background: linear-gradient(135deg, #1abc9c, #16a085); 
-    color: white;
-    padding: 12px 25px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: background-color 0.3s ease;
+  background: linear-gradient(135deg, #1abc9c, #16a085);
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.3s ease;
 }
 
 .acesso-negado .btn-login:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
-        
+
 .acesso-negado .link-voltar {
-    display: block;
-    margin-top: 20px;
-    color: #6c757d;
-    text-decoration: none;
-    font-size: 0.9em;
+  display: block;
+  margin-top: 20px;
+  color: #6c757d;
+  text-decoration: none;
+  font-size: 0.9em;
 }
 
 .acesso-negado .link-voltar:hover {
-    text-decoration: underline;
-}
-
-/* Ajuste no botão de voltar original para usar ícone */
-.back-button i {
-    margin-right: 8px;
+  text-decoration: underline;
 }

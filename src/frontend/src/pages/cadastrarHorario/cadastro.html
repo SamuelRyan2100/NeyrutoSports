@@ -1,169 +1,141 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastrar Horário</title>
-    <link rel="stylesheet" href="styleCadastro.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastrar Horário</title>
+  <link rel="stylesheet" href="styleCadastro.css?v=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-    <div class="form-container">
-        <div class="back-container">
-            <button class="back-button" onclick="window.location.href='../../index.html'">
-                <i class="fas fa-arrow-left"></i> Voltar
-            </button>
-        </div>
-
-        <h2>Cadastrar Horário</h2>
-        <form id="cadastroForm">
-            <div class="form-group">
-                <label for="data">Data</label>
-                <input type="date" id="data" name="data" required>
-            </div>
-
-            <div class="form-group">
-                <label for="inicio">Horário de Início</label>
-                <input type="time" id="inicio" name="horarioInicio" required>
-            </div>
-
-            <div class="form-group">
-                <label for="fim">Horário de Fim</label>
-                <input type="time" id="fim" name="horarioFim" required>
-            </div>
-
-            <div class="form-group">
-                <label for="tipo">Esporte</label>
-                <input type="text" id="tipo" name="tipo" placeholder="Ex: Futebol, Basquete" required>
-            </div>
-
-            <div class="form-group">
-                <label for="nome">Nome do Espaço Esportivo</label>
-                <input type="text" id="nome" name="nome" placeholder="Ex: Quadra A, Ginásio Principal" required>
-            </div>
-
-            <div class="form-group">
-                <label for="endereco">Endereço</label>
-                <input type="text" id="endereco" name="endereco" placeholder="Ex: Rua Principal, 123" required>
-            </div>
-
-            <div class="form-group">
-                <label for="limitePessoas">Limite de Pessoas</label>
-                <input type="number" id="limitePessoas" name="limitePessoas" min="1" value="10" required>
-            </div>
-
-            <div class="form-group">
-                <label for="descricao">Descrição</label>
-                <textarea id="descricao" name="descricao" rows="5" placeholder="Ex: Preciso de mais 4 pessoas para completar o time..."></textarea>
-            </div>
-
-            <button type="submit">Cadastrar</button>
-        </form>
+  <div class="form-container">
+    <div class="back-container">
+      <button class="back-button" onclick="window.location.href='../../index.html'">
+        <i class="fas fa-arrow-left"></i> Voltar
+      </button>
     </div>
 
-    <script>
-        // Adicionamos um listener que executa assim que a página carrega
-        document.addEventListener('DOMContentLoaded', function() {
-            
-            // --- INÍCIO DA VERIFICAÇÃO DE LOGIN ---
-            const isUserLoggedIn = localStorage.getItem("logado") === "true";
+    <h2>Cadastrar Horário</h2>
+    <form id="cadastroForm">
+      <div class="form-group">
+        <label for="data">Data</label>
+        <input type="date" id="data" name="data" required>
+      </div>
 
-            if (!isUserLoggedIn) {
-                // Se o usuário NÃO estiver logado:
-                const formContainer = document.querySelector('.form-container');
-                // Limpa o container e insere a mensagem de acesso negado.
-                formContainer.innerHTML = `
-                    <div class="acesso-negado">
-                        <i class="fas fa-exclamation-triangle fa-3x"></i>
-                        <h2>Acesso Restrito</h2>
-                        <p>Você precisa estar logado para cadastrar um novo horário.</p>
-                        <button class="btn-login" onclick="window.location.href='../login/login.html'">Ir para a página de Login</button>
-                        <a href="../../index.html" class="link-voltar">Voltar para a Home</a>
-                    </div>
-                `;
-                return; // Impede a execução do resto do script
-            }
-            // --- FIM DA VERIFICAÇÃO DE LOGIN ---
+      <div class="form-group">
+        <label for="inicio">Horário de Início</label>
+        <input type="time" id="inicio" name="horarioInicio" required>
+      </div>
 
-            // Se o usuário ESTIVER logado, o código abaixo (o seu código original) será executado normalmente.
-            document.getElementById('cadastroForm').addEventListener('submit', async function(event) {
-                event.preventDefault(); 
+      <div class="form-group">
+        <label for="fim">Horário de Fim</label>
+        <input type="time" id="fim" name="horarioFim" required>
+      </div>
 
-                const dataInput = document.getElementById('data').value;
-                const hoje = new Date();
-                const dataSelecionada = new Date(dataInput + 'T00:00:00'); // Adiciona T00:00:00 para evitar problemas de fuso
+      <div class="form-group">
+        <label for="tipo">Esporte</label>
+        <input type="text" id="tipo" name="tipo" placeholder="Ex: Futebol, Basquete" required>
+      </div>
 
-                // Zera as horas do 'hoje' para comparar apenas as datas
-                hoje.setHours(0, 0, 0, 0);
+      <div class="form-group">
+        <label for="nome">Nome do Espaço Esportivo</label>
+        <input type="text" id="nome" name="nome" placeholder="Ex: Quadra A, Ginásio Principal" required>
+      </div>
 
-                // Validação da Data: Não pode ser no passado
-                if (dataSelecionada < hoje) {
-                    alert('Não é possível cadastrar um horário em uma data passada.');
-                    return;
-                }
+      <div class="form-group">
+        <label for="endereco">Endereço</label>
+        <input type="text" id="endereco" name="endereco" placeholder="Ex: Rua Principal, 123" required>
+      </div>
 
-                // Coletar os dados do formulário
-                const data = dataInput;
-                const horarioInicio = document.getElementById('inicio').value + ':00';
-                const horarioFim = document.getElementById('fim').value + ':00';
-                const tipo = document.getElementById('tipo').value;
-                const nome = document.getElementById('nome').value;
-                const endereco = document.getElementById('endereco').value;
-                const limitePessoas = parseInt(document.getElementById('limitePessoas').value);
-                // Adicione a descrição ao objeto de dados
-                const descricao = document.getElementById('descricao').value;
+      <div class="form-group">
+        <label for="limitePessoas">Limite de Pessoas</label>
+        <input type="number" id="limitePessoas" name="limitePessoas" min="1" value="10" required>
+      </div>
 
-                if (isNaN(limitePessoas) || limitePessoas <= 0) {
-                    alert('Por favor, insira um valor válido e maior que zero para o Limite de Pessoas.');
-                    return;
-                }
+      <div class="form-group">
+        <label for="descricao">Descrição</label>
+        <textarea id="descricao" name="descricao" rows="5" placeholder="Ex: Preciso de mais 4 pessoas para completar o time..."></textarea>
+      </div>
 
-                if (!data || !horarioInicio || !horarioFim || !tipo || !nome || !endereco) {
-                    alert('Por favor, preencha todos os campos obrigatórios.');
-                    return;
-                }
+      <button type="submit">Cadastrar</button>
+    </form>
+  </div>
 
-                if (horarioFim <= horarioInicio) {
-                    alert('O horário de fim deve ser posterior ao horário de início.');
-                    return;
-                }
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const isUserLoggedIn = localStorage.getItem("logado") === "true";
 
-                const quadraData = {
-                    data,
-                    horarioInicio,
-                    horarioFim,
-                    tipo,
-                    nome,
-                    endereco,
-                    limitePessoas,
-                    descricao // Enviando a descrição
-                };
+      if (!isUserLoggedIn) {
+        const formContainer = document.querySelector('.form-container');
+        formContainer.innerHTML = `
+          <div class="acesso-negado">
+            <i class="fas fa-exclamation-triangle fa-3x"></i>
+            <h2>Acesso Restrito</h2>
+            <p>Você precisa estar logado para cadastrar um novo horário.</p>
+            <button class="btn-login" onclick="window.location.href='../login/login.html'">Ir para a página de Login</button>
+            <a href="../../index.html" class="link-voltar">Voltar para a Home</a>
+          </div>
+        `;
+        return;
+      }
 
-                try {
-                    const response = await fetch('http://localhost:8080/api/quadras/cadastrar', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(quadraData)
-                    });
+      document.getElementById('cadastroForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
 
-                    // Tenta ler a resposta como JSON, mesmo em caso de erro
-                    const result = await response.json(); 
+        const dataInput = document.getElementById('data').value;
+        const hoje = new Date();
+        const dataSelecionada = new Date(dataInput + 'T00:00:00');
+        hoje.setHours(0, 0, 0, 0);
 
-                    if (response.ok) {
-                        alert(result.mensagem || 'Horário cadastrado com sucesso!');
-                        document.getElementById('cadastroForm').reset(); 
-                        window.location.href = '../../index.html'; 
-                    } else {
-                        // Usa a mensagem de erro do backend, se houver
-                        alert(result.mensagem || `Erro ao cadastrar horário: ${response.status}`);
-                        console.error('Detalhes do erro:', result); 
-                    }
-                } catch (error) {
-                    console.error('Erro na requisição:', error);
-                    alert('Não foi possível conectar ao servidor. Verifique se o backend está rodando.');
-                }
-            });
-        });
-    </script>
+        if (dataSelecionada < hoje) {
+          alert('Não é possível cadastrar um horário em uma data passada.');
+          return;
+        }
+
+        const quadraData = {
+          data: dataInput,
+          horarioInicio: document.getElementById('inicio').value + ':00',
+          horarioFim: document.getElementById('fim').value + ':00',
+          tipo: document.getElementById('tipo').value,
+          nome: document.getElementById('nome').value,
+          endereco: document.getElementById('endereco').value,
+          limitePessoas: parseInt(document.getElementById('limitePessoas').value),
+          descricao: document.getElementById('descricao').value
+        };
+
+        if (isNaN(quadraData.limitePessoas) || quadraData.limitePessoas <= 0) {
+          alert('Por favor, insira um valor válido e maior que zero para o Limite de Pessoas.');
+          return;
+        }
+
+        if (quadraData.horarioFim <= quadraData.horarioInicio) {
+          alert('O horário de fim deve ser posterior ao horário de início.');
+          return;
+        }
+
+        try {
+          const response = await fetch('http://localhost:8080/api/quadras/cadastrar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(quadraData)
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            alert(result.mensagem || 'Horário cadastrado com sucesso!');
+            document.getElementById('cadastroForm').reset();
+            window.location.href = '../../index.html';
+          } else {
+            alert(result.mensagem || `Erro ao cadastrar horário: ${response.status}`);
+            console.error('Detalhes do erro:', result);
+          }
+        } catch (error) {
+          console.error('Erro na requisição:', error);
+          alert('Não foi possível conectar ao servidor. Verifique se o backend está rodando.');
+        }
+      });
+    });
+  </script>
 </body>
 </html>
