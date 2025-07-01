@@ -1,0 +1,16 @@
+# Usa imagem base com Java 17
+FROM eclipse-temurin:17-jdk
+
+# Cria um diretório para a aplicação
+WORKDIR /app
+
+# Copia o JAR gerado pelo Maven para dentro da imagem
+COPY target/demo-0.0.1-SNAPSHOT.jar app.jar
+
+
+# Expõe a porta 8080 (usada pelo Spring Boot)
+EXPOSE 8080
+
+# Comando que roda a aplicação
+ENTRYPOINT ["java", "-jar", "app.jar"]
+
