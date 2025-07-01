@@ -64,7 +64,7 @@
                 }
 
                 try {
-                    const response = await fetch(`http://localhost:8080/api/reservas/usuario/${usuarioId}`);
+                    const response = await fetch(`/api/reservas/usuario/${usuarioId}`);
                     if (!response.ok) {
                         throw new Error(`Erro ao buscar dados: ${response.status}`);
                     }
@@ -129,7 +129,7 @@
                     colDiv.querySelector('.btn-cancelar').addEventListener('click', async () => {
                          if (confirm(`Tem certeza que deseja cancelar a reserva para ${reserva.quadra.tipo} no dia ${formatarDataParaCard(reserva.data)}?`)) {
                             try {
-                                const response = await fetch(`http://localhost:8080/api/reservas/deletar/${reserva.id}`, {
+                                const response = await fetch(`/api/reservas/deletar/${reserva.id}`, {
                                     method: 'DELETE'
                                 });
                                 if (response.ok) {

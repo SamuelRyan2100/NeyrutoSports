@@ -10,7 +10,7 @@
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="styleLogin.css">
+    
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -257,7 +257,7 @@
                 };
 
                 try {
-                    const response = await fetch("http://localhost:8080/api/reservas/criar", {
+                    const response = await fetch("/api/reservas/criar", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
@@ -294,7 +294,7 @@
                     return;
                 }
                 try {
-                    const response = await fetch(`http://localhost:8080/api/reservas/usuario/${usuarioId}`);
+                    const response = await fetch(`/api/reservas/usuario/${usuarioId}`);
                     if (!response.ok) {
                         throw new Error(`Erro HTTP! status: ${response.status}`);
                     }
@@ -401,31 +401,47 @@
                 });
             }
 
-            // NOVA FUNÇÃO: Orquestra o carregamento de dados e a exibição
-            async function fetchAndDisplayAllData() {
-                quadrasContainer.innerHTML = "<p>Carregando quadras disponíveis...</p>"; // Mensagem de carregamento
+// NOVA FUNÇÃO: Orquestra o carregamento de dados e a exibição
+async function fetchAndDisplayAllData() {
+    quadrasContainer.innerHTML = "<p>Carregando quadras disponíveis...</p>";
 
-                try {
-                    // 1. Carrega todas as quadras
-                    const quadrasResponse = await fetch("http://localhost:8080/api/quadras/todasQuadras");
-                    if (!quadrasResponse.ok) {
-                        throw new Error(`Erro HTTP ao buscar quadras! status: ${quadrasResponse.status}`);
-                    }
-                    allQuadras = await quadrasResponse.json();
-                    console.log("Todas as quadras carregadas:", allQuadras);
-
-                    // 2. Carrega as reservas do usuário (se logado)
-                    await fetchUserReservations(); // Popula userReservations
-
-                    // 3. Exibe as quadras, considerando as reservas do usuário
-                    // Inicialmente, mostra todas as quadras. A pesquisa será feita em cima de 'allQuadras'.
-                    displayQuadras(allQuadras, userReservations);
-
-                } catch (error) {
-                    console.error("Erro ao carregar dados:", error);
-                    quadrasContainer.innerHTML = "<p>Não foi possível carregar as quadras. Verifique se o backend está rodando e a conexão de rede.</p>";
-                }
+    try {
+        // 1. Carrega todas as quadras - COM HEADERS NGROK
+        const quadrasResponse = await fetch("/api/quadras/todasQuadras", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "ngrok-skip-browser-warning": "true" // Header específico do ngrok
             }
+        });
+        
+        console.log("Status da resposta das quadras:", quadrasResponse.status);
+        console.log("Headers da resposta:", quadrasResponse.headers);
+        
+        if (!quadrasResponse.ok) {
+            throw new Error(`Erro HTTP ao buscar quadras! status: ${quadrasResponse.status}`);
+        }
+        
+        allQuadras = await quadrasResponse.json();
+        console.log("Todas as quadras carregadas:", allQuadras);
+
+        // 2. Carrega as reservas do usuário (se logado)
+        await fetchUserReservations();
+
+        // 3. Exibe as quadras, considerando as reservas do usuário
+        displayQuadras(allQuadras, userReservations);
+
+    } catch (error) {
+        console.error("Erro detalhado ao carregar dados:", error);
+        
+        // Mensagem de erro mais específica
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+            quadrasContainer.innerHTML = "<p>❌ Erro de conexão: Não foi possível conectar ao servidor. Verifique se o backend está rodando.</p>";
+        } else {
+            quadrasContainer.innerHTML = `<p>❌ Erro ao carregar quadras: ${error.message}</p>`;
+        }
+    }
+}
 
 
             // Event listener para a barra de pesquisa - MANTÉM A FILTRAGEM

@@ -75,7 +75,7 @@
 
             // --- LÓGICA DE LOGIN ---
             try {
-                const resposta = await fetch("http://localhost:8080/api/usuarios/login", {
+                const resposta = await fetch("/api/usuarios/login", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ email, senha })
@@ -118,7 +118,7 @@
 
             // --- LÓGICA DE CADASTRO ---
             try {
-                const resposta = await fetch("http://localhost:8080/api/usuarios/cadastro", {
+                const resposta = await fetch("/api/usuarios/cadastro", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ email, senha, nome })
